@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Fallback for environments where PostCSS isn't running, though CDN handles most. */
+body {
+  background-color: #020617;
+  color: #fcd34d;
+}
+
+.double-border {
+  border-style: double;
+  border-width: 4px;
+}
