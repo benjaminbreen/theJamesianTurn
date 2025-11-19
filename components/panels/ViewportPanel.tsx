@@ -14,6 +14,7 @@ import { ToastLayer } from '../viewport/ToastLayer';
 import { HoverInfo } from '../viewport/HoverInfo';
 import { SettingsOverlay } from '../viewport/SettingsOverlay';
 import { DonationModal } from '../viewport/DonationModal';
+import { TouchControls } from '../mobile/TouchControls';
 
 export const ViewportPanel = () => {
   const { theme } = useTheme();
@@ -328,6 +329,9 @@ export const ViewportPanel = () => {
             </div>
          </div>
       </div>
+
+      {/* Mobile Touch Controls */}
+      <TouchControls />
 
     </div>
   );

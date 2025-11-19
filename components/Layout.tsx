@@ -11,12 +11,14 @@ import { useGame } from '../contexts/GameContext';
 import { AsciiPortrait } from './visuals/AsciiPortrait';
 import { SplashPage } from './visuals/SplashPage';
 import { ZONES } from '../lib/zones';
+import { MobileSidebar } from './mobile/MobileSidebar';
 
 export const Layout = () => {
   const { gameTime, currentZone, togglePlayerModal, saveGame, endGame, lifecycle, toggleSettings, isInventoryOpen, playerStats, openDonationModal } = useGame();
   const [showSplash, setShowSplash] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [leftTab, setLeftTab] = useState('journal');
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState<'journal' | 'inventory' | 'narrator' | 'context' | null>(null);
 
   // Auto-show splash on first load
   useEffect(() => {
@@ -60,13 +62,13 @@ export const Layout = () => {
             </button>
          </div>
 
-         {/* CENTER: Dynamic Location & Time (Hidden on very small screens) */}
-         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:flex flex-col items-center justify-center cursor-help group">
-            <div className="text-[11px] font-sans uppercase tracking-[0.25em] opacity-70 mb-1.5 group-hover:text-[#8b0000] transition-colors flex items-center gap-2 px-3 py-1 bg-[#fdfbf7]/50 rounded border border-[#5c4033]/10">
-                <span className="text-sm">🕐</span>
-                {dateString} • {timeString}
+         {/* CENTER: Dynamic Location & Time */}
+         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center cursor-help group">
+            <div className="text-[9px] md:text-[11px] font-sans uppercase tracking-[0.15em] md:tracking-[0.25em] opacity-70 mb-1 md:mb-1.5 group-hover:text-[#8b0000] transition-colors flex items-center gap-1 md:gap-2 px-2 md:px-3 py-0.5 md:py-1 bg-[#fdfbf7]/50 rounded border border-[#5c4033]/10">
+                <span className="text-xs md:text-sm">🕐</span>
+                <span className="hidden sm:inline">{dateString} • </span>{timeString}
             </div>
-            <div className="text-xl font-bold text-[#5c4033] border-b-2 border-transparent group-hover:border-[#8b0000]/40 transition-all font-heading px-2">
+            <div className="text-sm md:text-xl font-bold text-[#5c4033] border-b-2 border-transparent group-hover:border-[#8b0000]/40 transition-all font-heading px-2">
                 {ZONES[currentZone].name}
             </div>
          </div>
@@ -125,9 +127,10 @@ export const Layout = () => {
                  >
                      💝 Subscribe to Support
                  </button>
-                 <button onClick={toggleSettings} className="px-4 py-3 text-left hover:bg-[#5c4033]/10 text-sm font-bold">Settings</button>
-                 <button onClick={saveGame} className="px-4 py-3 text-left hover:bg-[#5c4033]/10 text-sm font-bold">Save Game</button>
-                 <button onClick={handleEndGame} className="px-4 py-3 text-left hover:bg-[#8b0000]/10 text-sm font-bold text-[#8b0000]">Depart</button>
+                 <button onClick={() => { togglePlayerModal(); setMobileMenuOpen(false); }} className="px-4 py-3 text-left hover:bg-[#5c4033]/10 text-sm font-bold">👤 Profile</button>
+                 <button onClick={() => { toggleSettings(); setMobileMenuOpen(false); }} className="px-4 py-3 text-left hover:bg-[#5c4033]/10 text-sm font-bold">Settings</button>
+                 <button onClick={() => { saveGame(); setMobileMenuOpen(false); }} className="px-4 py-3 text-left hover:bg-[#5c4033]/10 text-sm font-bold">Save Game</button>
+                 <button onClick={() => { handleEndGame(); setMobileMenuOpen(false); }} className="px-4 py-3 text-left hover:bg-[#8b0000]/10 text-sm font-bold text-[#8b0000]">Depart</button>
              </div>
          )}
       </header>
@@ -188,7 +191,8 @@ export const Layout = () => {
            <div className="flex-1 relative">
              <ViewportPanel />
            </div>
-           <div className="h-14 shrink-0">
+           {/* Action Deck - Hidden on mobile, shown on desktop */}
+           <div className="h-14 shrink-0 hidden lg:block">
              <ActionDeck />
            </div>
         </section>
@@ -201,6 +205,72 @@ export const Layout = () => {
             ]} />
         </aside>
       </main>
+
+      {/* Mobile Bottom Navigation */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 h-16 bg-[#fdfbf7] border-t-2 border-[#5c4033]/20 flex items-center justify-around z-50 shadow-[0_-4px_12px_rgba(0,0,0,0.1)]">
+        <button
+          onClick={() => setMobileSidebarOpen('journal')}
+          className="flex flex-col items-center justify-center flex-1 h-full text-[#5c4033] active:bg-[#5c4033]/10"
+        >
+          <span className="text-xl mb-1">📖</span>
+          <span className="text-[10px] font-bold uppercase">Journal</span>
+        </button>
+        <button
+          onClick={() => setMobileSidebarOpen('inventory')}
+          className="flex flex-col items-center justify-center flex-1 h-full text-[#5c4033] active:bg-[#5c4033]/10"
+        >
+          <span className="text-xl mb-1">🎒</span>
+          <span className="text-[10px] font-bold uppercase">Inventory</span>
+        </button>
+        <button
+          onClick={() => setMobileSidebarOpen('narrator')}
+          className="flex flex-col items-center justify-center flex-1 h-full text-[#5c4033] active:bg-[#5c4033]/10"
+        >
+          <span className="text-xl mb-1">💬</span>
+          <span className="text-[10px] font-bold uppercase">Narrator</span>
+        </button>
+        <button
+          onClick={() => setMobileSidebarOpen('context')}
+          className="flex flex-col items-center justify-center flex-1 h-full text-[#5c4033] active:bg-[#5c4033]/10"
+        >
+          <span className="text-xl mb-1">📚</span>
+          <span className="text-[10px] font-bold uppercase">Context</span>
+        </button>
+      </div>
+
+      {/* Mobile Sidebars */}
+      <MobileSidebar
+        isOpen={mobileSidebarOpen === 'journal'}
+        onClose={() => setMobileSidebarOpen(null)}
+        title="Journal"
+      >
+        <StreamPanel />
+      </MobileSidebar>
+
+      <MobileSidebar
+        isOpen={mobileSidebarOpen === 'inventory'}
+        onClose={() => setMobileSidebarOpen(null)}
+        title="Inventory"
+      >
+        <InventoryPanel />
+      </MobileSidebar>
+
+      <MobileSidebar
+        isOpen={mobileSidebarOpen === 'narrator'}
+        onClose={() => setMobileSidebarOpen(null)}
+        title="Narrator"
+      >
+        <NarratorChat />
+      </MobileSidebar>
+
+      <MobileSidebar
+        isOpen={mobileSidebarOpen === 'context'}
+        onClose={() => setMobileSidebarOpen(null)}
+        title="Context"
+      >
+        <EducationPanel />
+      </MobileSidebar>
+
     </div>
   );
 };
