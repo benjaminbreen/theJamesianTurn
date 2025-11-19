@@ -13,11 +13,11 @@ export const ArtifactViewer = () => {
 
   return (
     <AnimatePresence>
-        <motion.div 
+        <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="absolute inset-0 z-[80] flex items-center justify-center bg-black/80 backdrop-blur-md p-12"
+            className="absolute inset-0 z-[80] flex items-center justify-center bg-black/90 backdrop-blur-lg p-12"
         >
             <div className={`w-full max-w-4xl h-full max-h-[600px] flex overflow-hidden shadow-2xl ${
                 isChronoscope 
@@ -73,7 +73,17 @@ export const ArtifactViewer = () => {
                                 {artifactState.item.type}
                             </span>
                         </div>
-                        <button onClick={closeArtifactView} className="text-2xl opacity-50 hover:opacity-100">×</button>
+                        <button
+                            onClick={closeArtifactView}
+                            className={`text-3xl w-10 h-10 rounded-full flex items-center justify-center transition-all hover:scale-110 ${
+                                isChronoscope
+                                    ? 'bg-slate-800/50 hover:bg-red-500/20 text-slate-300 hover:text-red-400'
+                                    : 'bg-[#5c4033]/10 hover:bg-red-800/20 text-[#5c4033] hover:text-red-800'
+                            }`}
+                            aria-label="Close"
+                        >
+                            ×
+                        </button>
                     </div>
 
                     <div className="flex-1 overflow-y-auto">
@@ -84,12 +94,12 @@ export const ArtifactViewer = () => {
                          {/* Contextual Actions */}
                          {(artifactState.item.type === 'BOOK' || artifactState.item.type === 'ARTIFACT') && (
                              <div className="mt-4">
-                                 <button 
+                                 <button
                                     onClick={generateInspectionText}
-                                    className={`px-4 py-2 text-xs font-bold uppercase tracking-widest border transition-all ${
+                                    className={`px-6 py-3 text-xs font-bold uppercase tracking-widest transition-all shadow-md hover:shadow-lg hover:scale-105 active:scale-95 ${
                                         isChronoscope
-                                            ? 'border-amber-500/50 text-amber-500 hover:bg-amber-500/10'
-                                            : 'border-[#5c4033]/30 text-[#5c4033] hover:bg-[#5c4033]/10'
+                                            ? 'bg-amber-500 text-slate-900 hover:bg-amber-400 border-2 border-amber-600'
+                                            : 'bg-victorian-gold text-paper-900 hover:bg-[#e0c84e] border-2 border-[#8b7500]'
                                     }`}
                                  >
                                      Read Excerpt / Analyze

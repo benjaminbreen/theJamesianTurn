@@ -28,18 +28,27 @@ export const ActionDeck = () => {
         </div>
         
         {/* Status Indicators */}
-        <div className="flex gap-6 text-xs font-bold uppercase tracking-wider opacity-80">
-            <div className="flex flex-col items-end">
-                <span className="text-[10px] opacity-60">Erudition</span>
-                <span className={isChronoscope ? 'text-cyan-400' : 'text-[#8b0000]'}>{playerStats.erudition}</span>
+        <div className="flex gap-4 text-xs font-bold uppercase tracking-wider">
+            <div className="flex items-center gap-2 bg-white/50 px-3 py-1.5 rounded border border-victorian-gold/30">
+                <span className="text-base">📚</span>
+                <div className="flex flex-col items-start">
+                    <span className="text-[9px] opacity-60 leading-none">Erudition</span>
+                    <span className={`text-sm ${isChronoscope ? 'text-cyan-400' : 'text-victorian-gold'}`}>{playerStats.erudition}</span>
+                </div>
             </div>
-            <div className="flex flex-col items-end">
-                <span className="text-[10px] opacity-60">Reputation</span>
-                <span className={isChronoscope ? 'text-amber-400' : 'text-[#8b0000]'}>{playerStats.reputation}</span>
+            <div className="flex items-center gap-2 bg-white/50 px-3 py-1.5 rounded border border-victorian-red/30">
+                <span className="text-base">⭐</span>
+                <div className="flex flex-col items-start">
+                    <span className="text-[9px] opacity-60 leading-none">Reputation</span>
+                    <span className={`text-sm ${isChronoscope ? 'text-amber-400' : 'text-victorian-red'}`}>{playerStats.reputation}</span>
+                </div>
             </div>
-             <div className="flex flex-col items-end">
-                <span className="text-[10px] opacity-60">Health</span>
-                <span className={isChronoscope ? 'text-green-400' : 'text-green-700'}>Fine</span>
+            <div className="flex items-center gap-2 bg-white/50 px-3 py-1.5 rounded border border-green-700/30">
+                <span className="text-base">💚</span>
+                <div className="flex flex-col items-start">
+                    <span className="text-[9px] opacity-60 leading-none">Health</span>
+                    <span className={`text-sm ${isChronoscope ? 'text-green-400' : 'text-green-700'}`}>Fine</span>
+                </div>
             </div>
         </div>
       </div>

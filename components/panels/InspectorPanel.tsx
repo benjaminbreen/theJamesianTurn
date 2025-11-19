@@ -64,13 +64,13 @@ export const NarratorChat = () => {
 
     return (
         <div className="flex flex-col h-full bg-paper-50">
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 scroll-gradient">
                 {narratorHistory.map((msg, i) => (
                     <div key={i} className={`${msg.role === 'user' ? 'ml-8' : 'mr-8'}`}>
-                        <div className={`p-3 text-sm shadow-sm ${
-                            msg.role === 'user' 
-                            ? 'bg-white text-paper-900 italic border border-paper-200' 
-                            : 'bg-paper-200 text-paper-900 font-serif'
+                        <div className={`p-4 text-sm shadow-sm leading-relaxed ${
+                            msg.role === 'user'
+                            ? 'bg-white text-paper-900 italic border border-paper-200'
+                            : 'bg-paper-200 text-paper-900 font-serif first-letter:text-2xl first-letter:font-bold first-letter:text-victorian-red first-letter:mr-1 first-letter:float-left'
                         }`}>
                             {msg.text}
                         </div>

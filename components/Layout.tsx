@@ -13,7 +13,7 @@ import { SplashPage } from './visuals/SplashPage';
 import { ZONES } from '../lib/zones';
 
 export const Layout = () => {
-  const { gameTime, currentZone, togglePlayerModal, saveGame, endGame, lifecycle, toggleSettings, isInventoryOpen } = useGame();
+  const { gameTime, currentZone, togglePlayerModal, saveGame, endGame, lifecycle, toggleSettings, isInventoryOpen, playerStats } = useGame();
   const [showSplash, setShowSplash] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [leftTab, setLeftTab] = useState('journal');
@@ -62,10 +62,11 @@ export const Layout = () => {
 
          {/* CENTER: Dynamic Location & Time (Hidden on very small screens) */}
          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:flex flex-col items-center justify-center cursor-help group">
-            <div className="text-[10px] font-sans uppercase tracking-[0.2em] opacity-60 mb-1 group-hover:text-[#8b0000] transition-colors">
+            <div className="text-[11px] font-sans uppercase tracking-[0.25em] opacity-70 mb-1.5 group-hover:text-[#8b0000] transition-colors flex items-center gap-2 px-3 py-1 bg-[#fdfbf7]/50 rounded border border-[#5c4033]/10">
+                <span className="text-sm">🕐</span>
                 {dateString} • {timeString}
             </div>
-            <div className="text-lg font-bold text-[#5c4033] border-b border-transparent group-hover:border-[#5c4033]/30 transition-all font-heading">
+            <div className="text-xl font-bold text-[#5c4033] border-b-2 border-transparent group-hover:border-[#8b0000]/40 transition-all font-heading px-2">
                 {ZONES[currentZone].name}
             </div>
          </div>
@@ -124,7 +125,7 @@ export const Layout = () => {
         {/* LEFT SIDEBAR */}
         <aside className="w-80 shrink-0 z-10 shadow-xl flex flex-col border-r border-[#5c4033]/20 hidden lg:flex bg-[#fdfbf7]">
             {/* Portrait Area (Fixed Top-Left) */}
-            <div 
+            <div
                 onClick={togglePlayerModal}
                 className="h-64 bg-[#fdfbf7] border-b border-[#5c4033]/20 flex flex-col items-center justify-center p-4 relative overflow-hidden group cursor-pointer hover:bg-[#fffdf5] transition-colors"
             >
@@ -133,7 +134,24 @@ export const Layout = () => {
                     <AsciiPortrait id="HENRY_JAMES" className="scale-150 text-[#1a1614]" />
                 </div>
                 <h2 className="text-2xl font-bold text-[#8b0000] font-heading">Henry James</h2>
-                <p className="text-xs font-sans uppercase tracking-widest opacity-60">Man of Letters</p>
+                <p className="text-xs font-sans uppercase tracking-widest opacity-60 mb-2">Man of Letters</p>
+
+                {/* Quick Stats Display */}
+                <div className="flex gap-3 text-[10px] font-sans uppercase tracking-wide mt-1">
+                    <div className="flex items-center gap-1 text-green-700" title="Health">
+                        <span>💚</span>
+                        <span>Fine</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-victorian-red" title="Reputation">
+                        <span>⭐</span>
+                        <span>{playerStats.reputation}</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-victorian-gold" title="Erudition">
+                        <span>📚</span>
+                        <span>{playerStats.erudition}</span>
+                    </div>
+                </div>
+
                 <div className="absolute top-2 right-2 text-[#5c4033] opacity-0 group-hover:opacity-100 transition-opacity text-xs uppercase font-bold">
                     View Profile ↗
                 </div>

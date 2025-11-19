@@ -39,7 +39,7 @@ export const InventoryPanel = () => {
                 Your pockets contain only lint and ambition.
             </div>
         ) : (
-            <div className="flex-1 overflow-y-auto pr-1 custom-scrollbar">
+            <div className="flex-1 overflow-y-auto pr-1 scroll-gradient">
                 {viewMode === 'grid' ? (
                     <div className="grid grid-cols-3 gap-2">
                         {inventory.map((item, idx) => (
