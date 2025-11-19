@@ -5,9 +5,14 @@ import { useTheme } from '../../contexts/ThemeContext';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export const SettingsOverlay = () => {
-    const { isSettingsOpen, toggleSettings, volume, setVolume, textSpeed, setTextSpeed } = useGame();
+    const { isSettingsOpen, toggleSettings, volume, setVolume, textSpeed, setTextSpeed, llmCallCount, openDonationModal } = useGame();
     const { theme, toggleTheme } = useTheme();
     const isChronoscope = theme === 'chronoscope';
+
+    const handleDonateClick = () => {
+        toggleSettings(); // Close settings first
+        openDonationModal(); // Open donation modal
+    };
 
     if (!isSettingsOpen) return null;
 
@@ -61,11 +66,11 @@ export const SettingsOverlay = () => {
                         {/* Theme Toggle */}
                         <div className="flex justify-between items-center">
                             <span className="text-sm font-bold uppercase tracking-wider">Visual Interface</span>
-                            <button 
+                            <button
                                 onClick={toggleTheme}
                                 className={`px-4 py-2 text-xs font-bold uppercase border transition-all ${
-                                    isChronoscope 
-                                    ? 'border-cyan-500 text-cyan-500 hover:bg-cyan-500/20' 
+                                    isChronoscope
+                                    ? 'border-cyan-500 text-cyan-500 hover:bg-cyan-500/20'
                                     : 'border-[#5c4033] text-[#5c4033] hover:bg-[#5c4033] hover:text-[#fdf6e3]'
                                 }`}
                             >
@@ -73,30 +78,77 @@ export const SettingsOverlay = () => {
                             </button>
                         </div>
 
+                        {/* Donate Button */}
+                        <div className={`pt-4 border-t ${isChronoscope ? 'border-cyan-500/30' : 'border-[#5c4033]/20'}`}>
+                            <div className="text-center">
+                                <div className="mb-3">
+                                    <span className={`text-xs uppercase tracking-wider ${isChronoscope ? 'text-amber-500' : 'text-[#8b0000]'}`}>
+                                        AI Calls This Session: {llmCallCount}
+                                    </span>
+                                </div>
+                                <button
+                                    onClick={handleDonateClick}
+                                    className={`px-6 py-2 text-sm font-bold uppercase border-2 transition-all w-full ${
+                                        isChronoscope
+                                        ? 'border-amber-500 text-amber-400 hover:bg-amber-500 hover:text-slate-900'
+                                        : 'border-[#8b0000] text-[#8b0000] hover:bg-[#8b0000] hover:text-[#fdf6e3]'
+                                    }`}
+                                >
+                                    💝 Support This Project
+                                </button>
+                                <p className={`text-[10px] mt-2 opacity-60 ${isChronoscope ? 'font-mono' : 'font-serif italic'}`}>
+                                    Help cover API and hosting costs
+                                </p>
+                            </div>
+                        </div>
+
                          {/* Text Speed (Flavor Only mostly) */}
                          <div className="flex justify-between items-center">
                             <span className="text-sm font-bold uppercase tracking-wider">Narrative Speed</span>
                             <div className="flex gap-2">
-                                <button 
+                                <button
                                     onClick={() => setTextSpeed('SLOW')}
                                     className={`px-3 py-1 text-[10px] font-bold uppercase border ${
-                                        textSpeed === 'SLOW' 
+                                        textSpeed === 'SLOW'
                                             ? (isChronoscope ? 'bg-cyan-500 text-slate-900' : 'bg-[#5c4033] text-[#fdf6e3]')
                                             : 'border-gray-500 opacity-50'
                                     }`}
                                 >
                                     Slow
                                 </button>
-                                <button 
+                                <button
                                     onClick={() => setTextSpeed('FAST')}
                                     className={`px-3 py-1 text-[10px] font-bold uppercase border ${
-                                        textSpeed === 'FAST' 
+                                        textSpeed === 'FAST'
                                             ? (isChronoscope ? 'bg-cyan-500 text-slate-900' : 'bg-[#5c4033] text-[#fdf6e3]')
                                             : 'border-gray-500 opacity-50'
                                     }`}
                                 >
                                     Fast
                                 </button>
+                            </div>
+                        </div>
+
+                        {/* Controls Guide */}
+                        <div className="pt-4 border-t border-current opacity-30">
+                            <h3 className="text-sm font-bold uppercase tracking-wider mb-3 opacity-70">Controls</h3>
+                            <div className="space-y-2 text-xs">
+                                <div className="flex justify-between">
+                                    <span className="opacity-70">Movement</span>
+                                    <span className="font-mono font-bold">Arrow Keys / WASD</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="opacity-70">Interact</span>
+                                    <span className="font-mono font-bold">Space (Tap)</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="opacity-70">Eavesdrop</span>
+                                    <span className="font-mono font-bold">Space (Hold)</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="opacity-70">Inventory</span>
+                                    <span className="font-mono font-bold">I Key / Click Button</span>
+                                </div>
                             </div>
                         </div>
 

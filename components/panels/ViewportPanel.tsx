@@ -13,13 +13,15 @@ import { GameOverOverlay } from '../viewport/GameOverOverlay';
 import { ToastLayer } from '../viewport/ToastLayer';
 import { HoverInfo } from '../viewport/HoverInfo';
 import { SettingsOverlay } from '../viewport/SettingsOverlay';
+import { DonationModal } from '../viewport/DonationModal';
 
 export const ViewportPanel = () => {
   const { theme } = useTheme();
-  const { 
-      playerPos, movePlayer, triggerInteraction, currentInteraction, interactionTarget, 
+  const {
+      playerPos, movePlayer, triggerInteraction, currentInteraction, interactionTarget,
       isLoadingZone, currentZone, startEavesdrop, stopEavesdrop, isEavesdropping,
-      combatPhase, cinematicState, artifactState, isPlayerModalOpen, isSettingsOpen
+      combatPhase, cinematicState, artifactState, isPlayerModalOpen, isSettingsOpen,
+      toggleInventory
   } = useGame();
   const isChronoscope = theme === 'chronoscope';
   const viewportRef = useRef<HTMLDivElement>(null);
@@ -31,6 +33,10 @@ export const ViewportPanel = () => {
   const [isDragging, setIsDragging] = useState(false);
   const dragStart = useRef({ x: 0, y: 0 });
   const dragStartOffset = useRef({ x: 0, y: 0 });
+
+  // Eavesdrop Progress
+  const [eavesdropProgress, setEavesdropProgress] = useState(0);
+  const eavesdropIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // Handle Resize for Camera Centering
   useEffect(() => {
@@ -86,22 +92,42 @@ export const ViewportPanel = () => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Prevent default scrolling
       if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", " "].includes(e.key)) {
-        if (e.target instanceof HTMLInputElement) return; 
+        if (e.target instanceof HTMLInputElement) return;
         e.preventDefault();
       }
 
       if (e.target instanceof HTMLInputElement) return;
 
-      switch (e.key) {
-        case 'ArrowUp': case 'w': movePlayer('UP'); break;
-        case 'ArrowDown': case 's': movePlayer('DOWN'); break;
-        case 'ArrowLeft': case 'a': movePlayer('LEFT'); break;
-        case 'ArrowRight': case 'd': movePlayer('RIGHT'); break;
-        case ' ': 
+      switch (e.key.toLowerCase()) {
+        case 'arrowup': case 'w': movePlayer('UP'); break;
+        case 'arrowdown': case 's': movePlayer('DOWN'); break;
+        case 'arrowleft': case 'a': movePlayer('LEFT'); break;
+        case 'arrowright': case 'd': movePlayer('RIGHT'); break;
+        case 'i': toggleInventory(); break;
+        case ' ':
            if (!e.repeat) {
+               // Start progress animation
+               setEavesdropProgress(0);
+               const startTime = Date.now();
+               const duration = 500; // ms
+
+               if (eavesdropIntervalRef.current) {
+                   clearInterval(eavesdropIntervalRef.current);
+               }
+
+               eavesdropIntervalRef.current = setInterval(() => {
+                   const elapsed = Date.now() - startTime;
+                   const progress = Math.min((elapsed / duration) * 100, 100);
+                   setEavesdropProgress(progress);
+               }, 16); // ~60fps
+
                spaceTimer = setTimeout(() => {
                    startEavesdrop();
-               }, 500); 
+                   if (eavesdropIntervalRef.current) {
+                       clearInterval(eavesdropIntervalRef.current);
+                   }
+                   setEavesdropProgress(100);
+               }, duration);
            }
            break;
       }
@@ -109,9 +135,14 @@ export const ViewportPanel = () => {
 
     const handleKeyUp = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement) return;
-      
+
       if (e.key === ' ') {
          clearTimeout(spaceTimer);
+         if (eavesdropIntervalRef.current) {
+             clearInterval(eavesdropIntervalRef.current);
+         }
+         setEavesdropProgress(0);
+
          if (isEavesdropping) {
              stopEavesdrop();
          } else {
@@ -126,8 +157,11 @@ export const ViewportPanel = () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
       clearTimeout(spaceTimer);
+      if (eavesdropIntervalRef.current) {
+          clearInterval(eavesdropIntervalRef.current);
+      }
     };
-  }, [movePlayer, triggerInteraction, startEavesdrop, stopEavesdrop, isEavesdropping]);
+  }, [movePlayer, triggerInteraction, startEavesdrop, stopEavesdrop, isEavesdropping, toggleInventory]);
 
   const isCombat = combatPhase !== 'IDLE';
   const isCinematic = cinematicState.isPlaying;
@@ -250,29 +284,47 @@ export const ViewportPanel = () => {
       <PlayerModal />
       <GameOverOverlay />
       <SettingsOverlay />
+      <DonationModal />
       <ToastLayer />
       <HoverInfo />
 
       {/* Interaction HUD */}
       <div className={`absolute bottom-8 left-0 right-0 flex justify-center z-40 transition-opacity duration-300 pointer-events-none ${currentInteraction && !isPaused ? 'opacity-100' : 'opacity-0'}`}>
-         <div className={`px-6 py-2 flex items-center gap-3 backdrop-blur-md ${
-           isChronoscope 
-             ? 'bg-slate-900/80 border border-amber-500/50 text-amber-400 shadow-[0_0_20px_rgba(245,158,11,0.2)]'
-             : 'bg-[#fffdf5]/90 border-2 double-border border-[#5c4033] text-[#5c4033] shadow-lg'
-         }`}>
-            <div className={`font-bold uppercase text-sm tracking-wider ${isChronoscope ? 'animate-pulse' : ''}`}>
-               {isEavesdropping ? '[LISTENING...]' : '[SPACE]'}
-            </div>
-            <div className="h-4 w-px bg-current opacity-50"></div>
-            <div className="flex flex-col">
-               <span className="font-bold uppercase text-xs tracking-widest">
-                 {currentInteraction}
-               </span>
-               {interactionTarget && (
-                 <span className="text-[10px] opacity-80 leading-none">
-                    {interactionTarget.name}
-                 </span>
-               )}
+         <div className="flex flex-col items-center gap-2">
+            {/* Eavesdrop Progress Bar */}
+            {eavesdropProgress > 0 && eavesdropProgress < 100 && (
+               <div className={`w-48 h-1.5 rounded-full overflow-hidden ${
+                  isChronoscope ? 'bg-slate-800/80' : 'bg-[#5c4033]/30'
+               }`}>
+                  <div
+                     className={`h-full transition-all duration-75 ${
+                        isChronoscope ? 'bg-cyan-400' : 'bg-[#8b0000]'
+                     }`}
+                     style={{ width: `${eavesdropProgress}%` }}
+                  />
+               </div>
+            )}
+
+            {/* Interaction Prompt */}
+            <div className={`px-6 py-2 flex items-center gap-3 backdrop-blur-md ${
+              isChronoscope
+                ? 'bg-slate-900/80 border border-amber-500/50 text-amber-400 shadow-[0_0_20px_rgba(245,158,11,0.2)]'
+                : 'bg-[#fffdf5]/90 border-2 double-border border-[#5c4033] text-[#5c4033] shadow-lg'
+            }`}>
+               <div className={`font-bold uppercase text-sm tracking-wider ${isChronoscope ? 'animate-pulse' : ''}`}>
+                  {isEavesdropping ? '[LISTENING...]' : '[SPACE]'}
+               </div>
+               <div className="h-4 w-px bg-current opacity-50"></div>
+               <div className="flex flex-col">
+                  <span className="font-bold uppercase text-xs tracking-widest">
+                    {currentInteraction}
+                  </span>
+                  {interactionTarget && (
+                    <span className="text-[10px] opacity-80 leading-none">
+                       {interactionTarget.name}
+                    </span>
+                  )}
+               </div>
             </div>
          </div>
       </div>

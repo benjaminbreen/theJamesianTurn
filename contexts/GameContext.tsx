@@ -101,6 +101,12 @@ interface GameContextType {
   setVolume: (v: number) => void;
   textSpeed: 'SLOW' | 'FAST';
   setTextSpeed: (s: 'SLOW' | 'FAST') => void;
+
+  // LLM Tracking & Donation
+  llmCallCount: number;
+  isDonationModalOpen: boolean;
+  openDonationModal: () => void;
+  closeDonationModal: () => void;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -174,8 +180,40 @@ export const GameProvider = ({ children }: PropsWithChildren<{}>) => {
   const [volume, setVolumeState] = useState(0.5);
   const [textSpeed, setTextSpeed] = useState<'SLOW' | 'FAST'>('FAST');
 
+  // LLM Call Tracking & Donation Modal
+  const [llmCallCount, setLlmCallCount] = useState(() => {
+      const saved = localStorage.getItem('jamesian_llm_count');
+      return saved ? parseInt(saved, 10) : 0;
+  });
+  const [isDonationModalOpen, setIsDonationModalOpen] = useState(false);
+
   // Rate Limit Ref for Thoughts
   const lastThoughtTime = useRef<number>(0);
+
+  // Save LLM count to localStorage
+  useEffect(() => {
+      localStorage.setItem('jamesian_llm_count', llmCallCount.toString());
+  }, [llmCallCount]);
+
+  // Check if we should show donation modal
+  useEffect(() => {
+      if (llmCallCount >= 100 && !isDonationModalOpen) {
+          setIsDonationModalOpen(true);
+      }
+  }, [llmCallCount]);
+
+  // Increment LLM count helper
+  const incrementLLMCount = () => {
+      setLlmCallCount(prev => prev + 1);
+  };
+
+  const closeDonationModal = () => {
+      setIsDonationModalOpen(false);
+  };
+
+  const openDonationModal = () => {
+      setIsDonationModalOpen(true);
+  };
 
   // Update audio engine when state changes
   const setVolume = (v: number) => {
@@ -224,6 +262,7 @@ export const GameProvider = ({ children }: PropsWithChildren<{}>) => {
       });
 
       // 5. Generate Flavor Text
+      incrementLLMCount();
       generateIntro(ZONES[randomScenario.startZone].name).then(text => {
           setNarratorHistory([{role: 'model', text: text}]);
           // Only add if not redundant with scenario intro
@@ -248,6 +287,7 @@ export const GameProvider = ({ children }: PropsWithChildren<{}>) => {
       setLifecycle('ENDED');
       playSound('CHIME');
       // Generate Summary
+      incrementLLMCount();
       const summary = await generateEndGameReview(gameLog, inventory, playerStats);
       setGameSummary(summary);
   };
@@ -274,11 +314,12 @@ export const GameProvider = ({ children }: PropsWithChildren<{}>) => {
       const now = Date.now();
       if (now - lastThoughtTime.current > 60000 && Math.random() < 0.15) {
           lastThoughtTime.current = now;
+          incrementLLMCount();
           generateStrayThought(ZONES[currentZone].name, gameLog.slice(-2).map(l=>l.text).join(" ")).then(thought => {
              // Changed: Send to Narrator History instead of Toast
-             setNarratorHistory(prev => [...prev, { 
-                 role: 'model', 
-                 text: `[Internal Monologue] ${thought}` 
+             setNarratorHistory(prev => [...prev, {
+                 role: 'model',
+                 text: `[Internal Monologue] ${thought}`
              }]);
              // Optionally play a sound
              playSound('TYPEWRITER');
@@ -550,6 +591,7 @@ export const GameProvider = ({ children }: PropsWithChildren<{}>) => {
          playSound('UI_CLICK');
          setDialogueState({ isOpen: true, npcId: blockingEntity.id, history: [{ speaker: 'NPC', text: "..." }] });
          const prompt = (blockingEntity as Partial<Persona>).voicePrompt || `You are ${blockingEntity.name}, a ${blockingEntity.profession || 'visitor'} in 1889 Paris.`;
+         incrementLLMCount();
          generateDialogueResponse({ ...blockingEntity, voicePrompt: prompt } as Persona, "Hello", "Neutral", "Greeting").then(res => {
                setDialogueState(prev => ({ ...prev, history: [{ speaker: 'NPC', text: res }] }));
                playSound('TYPEWRITER');
@@ -602,6 +644,7 @@ export const GameProvider = ({ children }: PropsWithChildren<{}>) => {
       } else if (currentInteraction === 'GREET' && interactionTarget) {
           setDialogueState({ isOpen: true, npcId: interactionTarget.id, history: [{ speaker: 'NPC', text: "..." }] });
           const prompt = (interactionTarget as Partial<Persona>).voicePrompt || `You are ${interactionTarget.name}, a ${interactionTarget.profession || 'visitor'} in 1889 Paris.`;
+          incrementLLMCount();
           generateDialogueResponse({ ...interactionTarget, voicePrompt: prompt } as Persona, "Hello", "Neutral", "Greeting").then(res => {
                setDialogueState(prev => ({ ...prev, history: [{ speaker: 'NPC', text: res }] }));
                playSound('TYPEWRITER');
@@ -622,6 +665,7 @@ export const GameProvider = ({ children }: PropsWithChildren<{}>) => {
       setIsEavesdropping(true);
       setTimeout(async () => {
           if (!isEavesdropping) return;
+          incrementLLMCount();
           const rumorText = await generateRumor(ZONES[currentZone].name);
           setRumors(prev => [...prev, { id: Date.now().toString(), text: rumorText, source: 'Overheard', topic: [], value: 10 }]);
           addLog(`Overheard: "${rumorText}"`, 'THOUGHT');
@@ -640,6 +684,7 @@ export const GameProvider = ({ children }: PropsWithChildren<{}>) => {
           const entity = entities.find(e => e.id === dialogueState.npcId) || getPersonaById(dialogueState.npcId);
           if (entity) {
             const prompt = (entity as Partial<Persona>).voicePrompt || `You are ${entity.name}.`;
+            incrementLLMCount();
             const res = await generateDialogueResponse({...entity, voicePrompt: prompt} as Persona, text, tone, "Chat");
             setDialogueState(prev => ({ ...prev, history: [...prev.history, { speaker: 'NPC', text: res }] }));
             playSound('TYPEWRITER');
@@ -653,6 +698,7 @@ export const GameProvider = ({ children }: PropsWithChildren<{}>) => {
       playSound('UI_CLICK');
       setNarratorHistory(prev => [...prev, { role: 'user', text }]);
       setIsNarratorTyping(true);
+      incrementLLMCount();
       const res = await generateNarratorResponse(narratorHistory, text, `Zone: ${ZONES[currentZone].name}`);
       setNarratorHistory(prev => [...prev, { role: 'model', text: res }]);
       setIsNarratorTyping(false);
@@ -688,6 +734,7 @@ export const GameProvider = ({ children }: PropsWithChildren<{}>) => {
           setPlayerStats(prev => ({ ...prev, composure: Math.min(prev.maxComposure, prev.composure + playerHealing) }));
       }
 
+      incrementLLMCount();
       const desc = await resolveCombatTurn('Henry James', combatOpponent.name, COMBAT_MOVES.find(m => m.id === moveId)!.name, ZONES[currentZone].name);
       addLog(desc, 'COMBAT');
       playSound('TYPEWRITER');
@@ -700,6 +747,7 @@ export const GameProvider = ({ children }: PropsWithChildren<{}>) => {
           const newPlayerComposure = Math.max(0, playerStats.composure - aiDamage);
 
           setPlayerStats(prev => ({ ...prev, composure: newPlayerComposure }));
+          incrementLLMCount();
           const aiDesc = await resolveCombatTurn(combatOpponent.name, 'Henry James', 'Retort', ZONES[currentZone].name);
           addLog(aiDesc, 'COMBAT');
 
@@ -722,6 +770,7 @@ export const GameProvider = ({ children }: PropsWithChildren<{}>) => {
 
   const triggerProceduralEvent = async () => {
       playSound('CHIME');
+      incrementLLMCount();
       const event = await generateProceduralEvent(ZONES[currentZone].name, "Walking");
       if (event) setEventState(event);
   };
@@ -782,6 +831,7 @@ export const GameProvider = ({ children }: PropsWithChildren<{}>) => {
       playSound('UI_CLICK');
       setFactCheckState(prev => ({ ...prev, isOpen: true, isLoading: true, lastEvent: eventText }));
       const wikiData = await searchWikipedia(eventText.split(' ').slice(0, 5).join(' ')); // Simple keyword extraction
+      incrementLLMCount();
       const check = await generateFactCheck(eventText, wikiData || undefined);
       setFactCheckState({
           isOpen: true,
@@ -807,13 +857,15 @@ export const GameProvider = ({ children }: PropsWithChildren<{}>) => {
   const generateInspectionImage = async () => {
       if (!artifactState.item) return;
       setArtifactState(prev => ({ ...prev, isLoading: true }));
+      incrementLLMCount();
       const img = await generateArtifactImage(artifactState.item);
       setArtifactState(prev => ({ ...prev, image: img, isLoading: false }));
   };
-  
+
   const generateInspectionText = async () => {
       if (!artifactState.item) return;
       setArtifactState(prev => ({ ...prev, isLoading: true }));
+      incrementLLMCount();
       const text = await generateArtifactDescription(artifactState.item);
       setArtifactState(prev => ({ ...prev, text, isLoading: false }));
   };
@@ -844,7 +896,8 @@ export const GameProvider = ({ children }: PropsWithChildren<{}>) => {
       generateInspectionImage, generateInspectionText,
       factCheckState, checkVeracity,
       isPlayerModalOpen, togglePlayerModal,
-      isSettingsOpen, toggleSettings, volume, setVolume, textSpeed, setTextSpeed
+      isSettingsOpen, toggleSettings, volume, setVolume, textSpeed, setTextSpeed,
+      llmCallCount, isDonationModalOpen, openDonationModal, closeDonationModal
     }}>
       {children}
     </GameContext.Provider>

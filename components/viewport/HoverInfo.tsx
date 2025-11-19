@@ -25,21 +25,21 @@ export const HoverInfo = () => {
                 }`}
             >
                 <div className="flex items-center gap-2 mb-1">
-                    {hoverInfo.icon && <span className="text-xl">{hoverInfo.icon}</span>}
-                    <h3 className={`text-sm font-bold uppercase tracking-wider ${
+                    {hoverInfo.icon && <span className="text-2xl">{hoverInfo.icon}</span>}
+                    <h3 className={`text-base font-bold uppercase tracking-wider ${
                         isChronoscope ? 'text-white' : 'text-[#8b0000]'
                     }`}>
                         {hoverInfo.title}
                     </h3>
                 </div>
-                
-                <div className={`text-[10px] uppercase tracking-widest mb-2 opacity-60 ${
+
+                <div className={`text-xs uppercase tracking-widest mb-2 opacity-60 ${
                     isChronoscope ? 'text-amber-500' : 'text-[#5c4033]'
                 }`}>
                     {hoverInfo.type}
                 </div>
 
-                <p className={`text-xs leading-tight ${
+                <p className={`text-sm leading-snug ${
                     isChronoscope ? 'font-mono' : 'font-serif italic'
                 }`}>
                     {hoverInfo.description}

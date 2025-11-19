@@ -47,7 +47,23 @@ export const ActionDeck = () => {
                 <span className="text-base">💚</span>
                 <div className="flex flex-col items-start">
                     <span className="text-[9px] opacity-60 leading-none">Health</span>
-                    <span className={`text-sm ${isChronoscope ? 'text-green-400' : 'text-green-700'}`}>Fine</span>
+                    <span className={`text-sm ${
+                        playerStats.composure > playerStats.maxComposure * 0.75
+                            ? (isChronoscope ? 'text-green-400' : 'text-green-700')
+                            : playerStats.composure > playerStats.maxComposure * 0.5
+                            ? (isChronoscope ? 'text-yellow-400' : 'text-yellow-700')
+                            : playerStats.composure > playerStats.maxComposure * 0.25
+                            ? (isChronoscope ? 'text-orange-400' : 'text-orange-700')
+                            : (isChronoscope ? 'text-red-400' : 'text-red-700')
+                    }`}>
+                        {playerStats.composure > playerStats.maxComposure * 0.75
+                            ? 'Fine'
+                            : playerStats.composure > playerStats.maxComposure * 0.5
+                            ? 'Frayed'
+                            : playerStats.composure > playerStats.maxComposure * 0.25
+                            ? 'Wounded'
+                            : 'Critical'}
+                    </span>
                 </div>
             </div>
         </div>
