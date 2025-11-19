@@ -63,6 +63,7 @@ interface GameContextType {
   
   narratorHistory: {role: 'user' | 'model', text: string}[];
   sendNarratorMessage: (text: string) => Promise<void>;
+  triggerStrayThought: () => Promise<void>;
   isNarratorTyping: boolean;
 
   combatPhase: CombatPhase;
@@ -309,22 +310,6 @@ export const GameProvider = ({ children }: PropsWithChildren<{}>) => {
       
       // Advance Time (1 minute per second)
       setGameTime(prev => new Date(prev.getTime() + 60000));
-
-      // Random Stray Thoughts (Check timestamp cooldown of 60 seconds)
-      const now = Date.now();
-      if (now - lastThoughtTime.current > 60000 && Math.random() < 0.15) {
-          lastThoughtTime.current = now;
-          incrementLLMCount();
-          generateStrayThought(ZONES[currentZone].name, gameLog.slice(-2).map(l=>l.text).join(" ")).then(thought => {
-             // Changed: Send to Narrator History instead of Toast
-             setNarratorHistory(prev => [...prev, {
-                 role: 'model',
-                 text: `[Internal Monologue] ${thought}`
-             }]);
-             // Optionally play a sound
-             playSound('TYPEWRITER');
-          });
-      }
 
       setEntities(prev => {
           return prev.map(entity => {
@@ -694,6 +679,18 @@ export const GameProvider = ({ children }: PropsWithChildren<{}>) => {
 
   const closeDialogue = () => setDialogueState(prev => ({ ...prev, isOpen: false }));
 
+  const triggerStrayThought = async () => {
+      // Manual trigger for stream of consciousness thoughts
+      playSound('UI_CLICK');
+      incrementLLMCount();
+      const thought = await generateStrayThought(ZONES[currentZone].name, gameLog.slice(-2).map(l=>l.text).join(" "));
+      setNarratorHistory(prev => [...prev, {
+          role: 'model',
+          text: `[Internal Monologue] ${thought}`
+      }]);
+      playSound('TYPEWRITER');
+  };
+
   const sendNarratorMessage = async (text: string) => {
       playSound('UI_CLICK');
       setNarratorHistory(prev => [...prev, { role: 'user', text }]);
@@ -889,7 +886,7 @@ export const GameProvider = ({ children }: PropsWithChildren<{}>) => {
       startEavesdrop, stopEavesdrop, isEavesdropping,
       currentZone, isLoadingZone,
       dialogueState, sendDialogue, closeDialogue, rumors,
-      narratorHistory, sendNarratorMessage, isNarratorTyping,
+      narratorHistory, sendNarratorMessage, triggerStrayThought, isNarratorTyping,
       combatPhase, playerStats, playerProfile, combatOpponent, startCombat, executeCombatMove, endCombat,
       eventState, resolveEvent, cinematicState,
       inventory, isInventoryOpen, toggleInventory, artifactState, inspectItem, closeArtifactView, 

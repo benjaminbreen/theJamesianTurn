@@ -8,7 +8,11 @@ interface PlayerTokenProps {
 }
 
 export const PlayerToken = ({ cellSize }: PlayerTokenProps) => {
-  const { playerPos, playerFacing } = useGame();
+  const { playerPos, playerFacing, triggerStrayThought } = useGame();
+
+  const handleClick = () => {
+    triggerStrayThought();
+  };
 
   // --- ANIMATION VARIANTS ---
   const containerVariants: Variants = {
@@ -53,7 +57,7 @@ export const PlayerToken = ({ cellSize }: PlayerTokenProps) => {
 
   return (
     <motion.div
-      className="absolute z-30 flex items-center justify-center pointer-events-none"
+      className="absolute z-30 flex items-center justify-center pointer-events-auto cursor-pointer"
       initial={false}
       animate={{
         x: playerPos.x * cellSize,
@@ -61,6 +65,8 @@ export const PlayerToken = ({ cellSize }: PlayerTokenProps) => {
       }}
       transition={{ type: "spring", stiffness: 300, damping: 25 }}
       style={{ width: cellSize, height: cellSize }}
+      onClick={handleClick}
+      title="Click for inner thoughts"
     >
       <motion.div 
         className="relative w-full h-full"
