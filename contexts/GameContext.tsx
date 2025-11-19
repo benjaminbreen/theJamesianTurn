@@ -138,7 +138,27 @@ export const GameProvider = ({ children }: PropsWithChildren<{}>) => {
   const [playerStats, setPlayerStats] = useState<PlayerStats>({ ...PLAYER_STARTING_STATS, level: 1, xp: 0 });
   const [playerProfile, setPlayerProfile] = useState<PlayerProfile>(generatePlayerProfile());
   const [combatOpponent, setCombatOpponent] = useState<Persona | null>(null);
-  
+
+  // XP Leveling Effect
+  useEffect(() => {
+      const xpForNextLevel = playerStats.level * 200; // 200 XP for level 2, 400 for level 3, etc.
+      if (playerStats.xp >= xpForNextLevel) {
+          const newLevel = playerStats.level + 1;
+          setPlayerStats(prev => ({
+              ...prev,
+              level: newLevel,
+              xp: prev.xp - xpForNextLevel, // Carry over excess XP
+              maxComposure: prev.maxComposure + 20,
+              composure: prev.maxComposure + 20, // Heal to new max
+              erudition: prev.erudition + 3,
+              reputation: prev.reputation + 2
+          }));
+          addLog(`Level Up! You are now Level ${newLevel}. Your capabilities have grown.`, 'SYSTEM');
+          addNotification(`🎉 Level ${newLevel} Achieved!`, 'ALERT');
+          playSound('CHIME');
+      }
+  }, [playerStats.xp, playerStats.level]);
+
   const [eventState, setEventState] = useState<GameEvent | null>(null);
   const [cinematicState, setCinematicState] = useState<CinematicState>({ isPlaying: false, type: null, progress: 0 });
 
@@ -322,13 +342,14 @@ export const GameProvider = ({ children }: PropsWithChildren<{}>) => {
   // --- Core Gameplay Logic (Movement, Zone, Interaction) ---
 
   const updateVisibility = (map: TileData[][], px: number, py: number) => {
+      // Keep previously lit areas lit, but only current radius is "visible" (bright)
       const newMap = map.map(row => row.map(tile => ({ ...tile, visible: false })));
       const radius = 6;
       for (let y = Math.max(0, py - radius); y <= Math.min(GRID_SIZE - 1, py + radius); y++) {
           for (let x = Math.max(0, px - radius); x <= Math.min(GRID_SIZE - 1, px + radius); x++) {
               if (Math.sqrt(Math.pow(x - px, 2) + Math.pow(y - py, 2)) <= radius) {
                   newMap[y][x].visible = true;
-                  newMap[y][x].lit = true; 
+                  newMap[y][x].lit = true;  // Mark as explored
               }
           }
       }
@@ -654,18 +675,36 @@ export const GameProvider = ({ children }: PropsWithChildren<{}>) => {
       playSound('UI_CLICK');
       setCombatPhase('RESOLVING');
       const damage = calculateDamage(moveId, playerStats, combatOpponent.stats);
-      setCombatOpponent(prev => prev ? ({ ...prev, stats: { ...prev.stats, composure: Math.max(0, prev.stats.composure - damage) } }) : null);
+
+      // Calculate new composure values BEFORE setting state
+      const newOpponentComposure = Math.max(0, combatOpponent.stats.composure - damage);
+      const playerHealing = moveId === 'COMPLIMENT' ? 10 : 0;
+
+      // Update opponent composure
+      setCombatOpponent(prev => prev ? ({ ...prev, stats: { ...prev.stats, composure: newOpponentComposure } }) : null);
+
+      // Heal player if using COMPLIMENT
+      if (playerHealing > 0) {
+          setPlayerStats(prev => ({ ...prev, composure: Math.min(prev.maxComposure, prev.composure + playerHealing) }));
+      }
+
       const desc = await resolveCombatTurn('Henry James', combatOpponent.name, COMBAT_MOVES.find(m => m.id === moveId)!.name, ZONES[currentZone].name);
       addLog(desc, 'COMBAT');
       playSound('TYPEWRITER');
-      
-      if (combatOpponent.stats.composure - damage <= 0) { endCombat(true); return; }
+
+      // Check victory using calculated value
+      if (newOpponentComposure <= 0) { endCombat(true); return; }
 
       setTimeout(async () => {
-          setPlayerStats(prev => ({ ...prev, composure: Math.max(0, prev.composure - 5) }));
+          const aiDamage = 5;
+          const newPlayerComposure = Math.max(0, playerStats.composure - aiDamage);
+
+          setPlayerStats(prev => ({ ...prev, composure: newPlayerComposure }));
           const aiDesc = await resolveCombatTurn(combatOpponent.name, 'Henry James', 'Retort', ZONES[currentZone].name);
           addLog(aiDesc, 'COMBAT');
-          if (playerStats.composure - 5 <= 0) { endCombat(false); return; }
+
+          // Check defeat using calculated value
+          if (newPlayerComposure <= 0) { endCombat(false); return; }
           setCombatPhase('PLAYER_CHOICE');
       }, 2000);
   };
@@ -691,11 +730,21 @@ export const GameProvider = ({ children }: PropsWithChildren<{}>) => {
       playSound('UI_CLICK');
       // The event text log
       addLog(choice.text, 'EVENT');
-      
+
       // Immediate Visual Outcome Notification (The Toast)
       let outcomeMsg = "You move on.";
       if (choice.outcomeType === 'GAIN_ITEM') {
-          const newItem = {...PROCEDURAL_ITEMS[0], id: `r-${Date.now()}`};
+          // Use outcomeValue to determine which item, or random if not specified
+          let itemToGive;
+          if (choice.outcomeValue) {
+              // Try to find item by id or name
+              itemToGive = PROCEDURAL_ITEMS.find(i => i.id === choice.outcomeValue || i.name === choice.outcomeValue);
+          }
+          // Fallback to random item if not found
+          if (!itemToGive) {
+              itemToGive = PROCEDURAL_ITEMS[Math.floor(Math.random() * PROCEDURAL_ITEMS.length)];
+          }
+          const newItem = {...itemToGive, id: `event-${Date.now()}`};
           setInventory(prev => [...prev, newItem]);
           outcomeMsg = `Acquired: ${newItem.name}`;
       } else if (choice.outcomeType === 'GAIN_RUMOR') {

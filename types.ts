@@ -111,7 +111,7 @@ export type Notification = {
 // Combat Types
 export type CombatPhase = 'IDLE' | 'PLAYER_CHOICE' | 'RESOLVING' | 'VICTORY' | 'DEFEAT';
 
-export type CombatMoveId = 'GLARE' | 'REFERENCE' | 'COMPLIMENT' | 'RUMOR';
+export type CombatMoveId = 'GLARE' | 'REFERENCE' | 'COMPLIMENT';
 
 export type CombatMove = {
     id: CombatMoveId;

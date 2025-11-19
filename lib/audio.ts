@@ -120,6 +120,17 @@ export const playSound = (type: 'TYPEWRITER' | 'STEP' | 'BUMP' | 'STEAM' | 'CHIM
             osc.start(t);
             osc.stop(t + 2);
             break;
+
+        case 'BUMP':
+            // Dull thud for collisions
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(80, t);
+            osc.frequency.exponentialRampToValueAtTime(40, t + 0.2);
+            gain.gain.setValueAtTime(0.15 * masterVolume, t);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+            osc.start(t);
+            osc.stop(t + 0.2);
+            break;
     }
 };
 
