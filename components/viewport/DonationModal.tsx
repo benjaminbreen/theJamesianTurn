@@ -35,24 +35,24 @@ export const DonationModal = () => {
                     {/* Header */}
                     <div className="text-center mb-6 relative z-10">
                         <div className="text-4xl mb-4">📜</div>
-                        <h2 className="text-2xl font-bold uppercase tracking-widest mb-2">Support This Experience</h2>
+                        <h2 className="text-2xl font-bold uppercase tracking-widest mb-2">Enjoying the Fair?</h2>
                         <div className={`h-px w-1/2 mx-auto ${isChronoscope ? 'bg-cyan-500' : 'bg-[#5c4033]'}`}></div>
                     </div>
 
                     {/* Content */}
                     <div className="space-y-6 relative z-10">
                         <p className={`text-center ${isChronoscope ? 'font-mono text-sm' : 'font-serif text-base italic'}`}>
-                            You have made <span className="font-bold text-amber-500">{llmCallCount}</span> AI-powered interactions in this session. The Jamesian Turn relies on API costs and hosting to function.
+                            You have made <span className="font-bold text-amber-500">{llmCallCount}</span> AI-powered interactions in this session. Each conversation costs real money in API fees.
                         </p>
 
                         <p className={`text-center ${isChronoscope ? 'font-mono text-sm' : 'font-serif text-base italic'}`}>
-                            If you're enjoying your time at the 1889 World's Fair and wish to support continued development, please consider subscribing to Res Obscura, my newsletter about history and the imagination.
+                            If you're enjoying The Jamesian Turn, please consider a <span className="font-bold">paid subscription</span> to <span className="font-bold">Res Obscura</span>, my newsletter about history and the imagination. Your support directly funds this experimental narrative experience.
                         </p>
 
                         {/* CTA Button */}
                         <div className="flex justify-center pt-4">
                             <a
-                                href="https://resobscura.substack.com/"
+                                href="https://resobscura.substack.com/subscribe"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className={`px-8 py-3 text-sm font-bold uppercase border-2 transition-all inline-block ${
@@ -61,13 +61,13 @@ export const DonationModal = () => {
                                     : 'border-[#8b0000] text-[#8b0000] hover:bg-[#8b0000] hover:text-[#fdf6e3]'
                                 }`}
                             >
-                                Subscribe to Res Obscura
+                                💝 Get a Paid Subscription
                             </a>
                         </div>
 
                         {/* Info */}
                         <p className={`text-center text-xs opacity-70 pt-4 ${isChronoscope ? 'font-mono' : 'font-serif'}`}>
-                            Your subscription directly supports the API costs and hosting that make this narrative experience possible.
+                            Paid subscriptions to Res Obscura directly fund the API costs and hosting for this game. Free tier is also available!
                         </p>
                     </div>
 

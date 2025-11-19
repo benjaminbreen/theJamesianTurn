@@ -13,7 +13,7 @@ import { SplashPage } from './visuals/SplashPage';
 import { ZONES } from '../lib/zones';
 
 export const Layout = () => {
-  const { gameTime, currentZone, togglePlayerModal, saveGame, endGame, lifecycle, toggleSettings, isInventoryOpen, playerStats } = useGame();
+  const { gameTime, currentZone, togglePlayerModal, saveGame, endGame, lifecycle, toggleSettings, isInventoryOpen, playerStats, openDonationModal } = useGame();
   const [showSplash, setShowSplash] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [leftTab, setLeftTab] = useState('journal');
@@ -75,19 +75,26 @@ export const Layout = () => {
          <div className="flex items-center gap-4">
             {/* Desktop Buttons */}
             <div className="hidden md:flex gap-2">
-                <button 
+                <button
+                    onClick={openDonationModal}
+                    className="px-4 py-2 text-xs font-bold uppercase tracking-widest bg-gradient-to-r from-[#d4af37] to-[#f4d03f] text-[#1a1614] hover:from-[#f4d03f] hover:to-[#d4af37] border-2 border-[#d4af37] transition-all active:scale-95 shadow-md hover:shadow-lg"
+                    title="Support this project with a paid subscription"
+                >
+                    💝 Subscribe
+                </button>
+                <button
                     onClick={toggleSettings}
                     className="px-4 py-2 text-xs font-bold uppercase tracking-widest hover:bg-[#5c4033]/10 border border-transparent hover:border-[#5c4033]/20 transition-all active:scale-95 text-[#5c4033]"
                 >
                     Settings
                 </button>
-                <button 
+                <button
                     onClick={saveGame}
                     className="px-4 py-2 text-xs font-bold uppercase tracking-widest hover:bg-[#5c4033]/10 border border-transparent hover:border-[#5c4033]/20 transition-all active:scale-95 active:bg-[#5c4033]/20 text-[#5c4033]"
                 >
                     Save
                 </button>
-                <button 
+                <button
                     onClick={handleEndGame}
                     className="px-4 py-2 text-xs font-bold uppercase tracking-widest text-[#8b0000] hover:bg-[#8b0000]/10 border border-transparent hover:border-[#8b0000]/20 transition-all active:scale-95"
                 >
@@ -108,10 +115,16 @@ export const Layout = () => {
 
          {/* Mobile Dropdown */}
          {mobileMenuOpen && (
-             <div className="absolute top-full right-0 w-48 bg-[#fdfbf7] border border-[#5c4033]/20 shadow-xl py-2 md:hidden flex flex-col z-50">
+             <div className="absolute top-full right-0 w-56 bg-[#fdfbf7] border border-[#5c4033]/20 shadow-xl py-2 md:hidden flex flex-col z-50">
                  <div className="px-4 py-2 text-xs uppercase tracking-widest opacity-50 border-b border-[#5c4033]/10 mb-2">
                      {timeString}
                  </div>
+                 <button
+                     onClick={() => { openDonationModal(); setMobileMenuOpen(false); }}
+                     className="mx-3 my-2 px-4 py-3 text-center bg-gradient-to-r from-[#d4af37] to-[#f4d03f] text-[#1a1614] font-bold text-sm border-2 border-[#d4af37] shadow-md hover:shadow-lg"
+                 >
+                     💝 Subscribe to Support
+                 </button>
                  <button onClick={toggleSettings} className="px-4 py-3 text-left hover:bg-[#5c4033]/10 text-sm font-bold">Settings</button>
                  <button onClick={saveGame} className="px-4 py-3 text-left hover:bg-[#5c4033]/10 text-sm font-bold">Save Game</button>
                  <button onClick={handleEndGame} className="px-4 py-3 text-left hover:bg-[#8b0000]/10 text-sm font-bold text-[#8b0000]">Depart</button>
