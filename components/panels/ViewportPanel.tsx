@@ -58,7 +58,10 @@ export const ViewportPanel = () => {
   const handleMouseDown = (e: React.MouseEvent) => {
     // Don't drag if we are clicking an overlay or interactive element
     if ((e.target as HTMLElement).closest('button')) return;
-    
+
+    // Disable drag on mobile (width < 1024px)
+    if (viewportRef.current && viewportRef.current.offsetWidth < 1024) return;
+
     setIsDragging(true);
     dragStart.current = { x: e.clientX, y: e.clientY };
     dragStartOffset.current = { ...panOffset };
@@ -168,20 +171,29 @@ export const ViewportPanel = () => {
   const isCinematic = cinematicState.isPlaying;
   const isPaused = artifactState.isOpen || isCombat || isCinematic || isPlayerModalOpen || isSettingsOpen;
 
-  // Calculate Transform
+  // Calculate Transform with mobile responsiveness
   const CELL_SIZE = 40;
+  const isMobile = dimensions.width < 1024; // lg breakpoint
+
+  // Auto-zoom for mobile to fit more of the map on screen
+  const mobileZoom = isMobile ? Math.max(0.6, Math.min(dimensions.width / 800, 1)) : 1;
+  const effectiveZoom = isMobile ? mobileZoom : zoom;
+
   const centerX = dimensions.width / 2;
   const centerY = dimensions.height / 2;
   const playerOffsetX = -(playerPos.x * CELL_SIZE) - (CELL_SIZE / 2);
   const playerOffsetY = -(playerPos.y * CELL_SIZE) - (CELL_SIZE / 2);
 
-  const totalX = centerX + panOffset.x;
-  const totalY = centerY + panOffset.y;
+  // On mobile, ignore pan offset (always centered on player)
+  const totalX = isMobile ? centerX : centerX + panOffset.x;
+  const totalY = isMobile ? centerY : centerY + panOffset.y;
 
   return (
     <div
         ref={viewportRef}
-        className={`relative h-full w-full flex items-center justify-center overflow-hidden cursor-move ${
+        className={`relative h-full w-full flex items-center justify-center overflow-hidden ${
+            isMobile ? 'cursor-default' : 'cursor-move'
+        } ${
             isChronoscope ? 'bg-slate-950' : 'bg-[#fdf6e3]'
         }`}
         style={{
@@ -239,18 +251,18 @@ export const ViewportPanel = () => {
       </div>
 
       {/* The Game World - Camera Container */}
-      <div 
+      <div
         className={`absolute z-10 origin-top-left will-change-transform ${isLoadingZone ? 'blur-sm' : 'blur-0'} ${isPaused ? 'blur-sm opacity-50' : ''}`}
         style={{
-            transform: `translate3d(${totalX}px, ${totalY}px, 0) scale(${zoom}) translate3d(${playerOffsetX}px, ${playerOffsetY}px, 0)`,
+            transform: `translate3d(${totalX}px, ${totalY}px, 0) scale(${effectiveZoom}) translate3d(${playerOffsetX}px, ${playerOffsetY}px, 0)`,
             transition: isDragging ? 'none' : 'transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1)'
         }}
       >
         <GridMap />
       </div>
 
-      {/* Map Controls */}
-      <div className="absolute bottom-24 right-4 z-40 flex flex-col gap-2 pointer-events-auto">
+      {/* Map Controls - Hidden on mobile */}
+      <div className="absolute bottom-24 right-4 z-40 flex-col gap-2 pointer-events-auto hidden lg:flex">
           <button 
             onClick={handleZoomIn}
             className={`w-8 h-8 flex items-center justify-center font-bold shadow-md transition-transform hover:scale-110 ${
