@@ -200,9 +200,17 @@ export const generateProceduralEvent = async (zoneName: string, context: string)
 // Artifact Inspection
 export const generateArtifactDescription = async (item: Item): Promise<string> => {
     const prompt = `
-    Describe the following 1889 artifact in the style of Henry James: "${item.name}".
-    Keep it under 60 words. Focus on texture, history, and sensory details.
-    Use **Second Person Present Tense** ("You run your finger along...").
+    You are examining: "${item.name}" from 1889.
+
+    Generate a REALISTIC text excerpt or content from this artifact:
+    - For newspapers/periodicals: Provide an actual article excerpt in the original language (French for Le Figaro, etc.)
+    - For books: Provide an actual passage from the book in its original language
+    - For documents: Provide actual text content
+    - For objects (tools, clothing, etc.): Provide a brief physical description
+
+    Be historically accurate. Use authentic language and style of the period.
+    Keep it under 80 words.
+    DO NOT write impressionistic descriptions like "You trace a finger..." - provide ACTUAL TEXT CONTENT.
     `;
     try {
         const response = await ai.models.generateContent({
