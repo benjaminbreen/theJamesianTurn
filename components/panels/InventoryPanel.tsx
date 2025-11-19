@@ -14,20 +14,20 @@ export const InventoryPanel = () => {
         isChronoscope ? 'text-slate-300' : 'text-[#2b2520]'
     }`}>
         {/* Controls */}
-        <div className="flex justify-between items-center mb-4 pb-2 border-b border-current opacity-70">
-            <span className="text-xs font-bold uppercase tracking-widest">Possessions ({inventory.length})</span>
-            <div className={`flex text-[10px] border rounded overflow-hidden ${
-                isChronoscope ? 'border-slate-600' : 'border-[#5c4033]'
+        <div className="flex justify-between items-center mb-4 pb-2 border-b border-victorian-red/30">
+            <span className="text-xs font-bold uppercase tracking-widest text-paper-900 font-sans">Possessions ({inventory.length})</span>
+            <div className={`flex text-[10px] border rounded overflow-hidden font-sans ${
+                isChronoscope ? 'border-slate-600' : 'border-victorian-red/40'
             }`}>
-                <button 
+                <button
                     onClick={() => setViewMode('list')}
-                    className={`px-2 py-1 ${viewMode === 'list' ? (isChronoscope ? 'bg-slate-700' : 'bg-[#5c4033] text-[#f3e5ab]') : ''}`}
+                    className={`px-2 py-1 transition-colors ${viewMode === 'list' ? (isChronoscope ? 'bg-slate-700' : 'bg-victorian-red text-paper-50') : 'hover:bg-paper-200'}`}
                 >
                     LIST
                 </button>
-                <button 
+                <button
                     onClick={() => setViewMode('grid')}
-                    className={`px-2 py-1 ${viewMode === 'grid' ? (isChronoscope ? 'bg-slate-700' : 'bg-[#5c4033] text-[#f3e5ab]') : ''}`}
+                    className={`px-2 py-1 transition-colors ${viewMode === 'grid' ? (isChronoscope ? 'bg-slate-700' : 'bg-victorian-red text-paper-50') : 'hover:bg-paper-200'}`}
                 >
                     GRID
                 </button>
@@ -43,37 +43,37 @@ export const InventoryPanel = () => {
                 {viewMode === 'grid' ? (
                     <div className="grid grid-cols-3 gap-2">
                         {inventory.map((item, idx) => (
-                            <div 
+                            <div
                                 key={idx}
                                 onClick={() => inspectItem(item)}
                                 className={`aspect-square flex flex-col items-center justify-center p-2 cursor-pointer transition-all border relative group ${
-                                    isChronoscope 
-                                        ? 'bg-slate-800 border-slate-700 hover:border-amber-500 hover:bg-slate-700' 
-                                        : 'bg-white border-[#5c4033]/20 hover:border-[#8b0000]'
+                                    isChronoscope
+                                        ? 'bg-slate-800 border-slate-700 hover:border-amber-500 hover:bg-slate-700'
+                                        : 'bg-paper-100 border-victorian-red/20 hover:border-victorian-red hover:bg-white shadow-sm'
                                 }`}
                                 title={item.name}
                             >
                                 <div className="text-2xl mb-1">{item.icon}</div>
-                                <div className="text-[9px] text-center leading-none opacity-80 line-clamp-2">{item.name}</div>
+                                <div className="text-[9px] text-center leading-tight text-paper-900 font-semibold line-clamp-2">{item.name}</div>
                             </div>
                         ))}
                     </div>
                 ) : (
                     <div className="flex flex-col gap-2">
                         {inventory.map((item, idx) => (
-                            <div 
+                            <div
                                 key={idx}
                                 onClick={() => inspectItem(item)}
-                                className={`flex items-start gap-3 p-2 border cursor-pointer transition-all hover:translate-x-1 ${
-                                    isChronoscope 
-                                        ? 'bg-slate-800/50 border-slate-700 hover:border-amber-500' 
-                                        : 'bg-white border-[#5c4033]/10 hover:border-[#8b0000]'
+                                className={`flex items-start gap-3 p-3 border cursor-pointer transition-all hover:translate-x-1 ${
+                                    isChronoscope
+                                        ? 'bg-slate-800/50 border-slate-700 hover:border-amber-500'
+                                        : 'bg-paper-100 border-victorian-red/20 hover:border-victorian-red hover:bg-white shadow-sm'
                                 }`}
                             >
                                 <div className="text-xl pt-0.5">{item.icon}</div>
                                 <div className="flex-1 min-w-0">
-                                    <h3 className="font-bold text-xs truncate">{item.name}</h3>
-                                    <p className="text-[10px] opacity-60 uppercase tracking-wide">{item.type}</p>
+                                    <h3 className="font-bold text-sm text-paper-900 truncate">{item.name}</h3>
+                                    <p className="text-[10px] text-victorian-slate opacity-70 uppercase tracking-wide font-sans">{item.type}</p>
                                 </div>
                             </div>
                         ))}
