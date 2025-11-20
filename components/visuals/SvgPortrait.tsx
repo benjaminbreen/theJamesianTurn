@@ -761,7 +761,7 @@ const SvgPortrait: React.FC<Props> = ({ archetype, emotion = 'neutral', classNam
       >
         <style>{styles}</style>
         <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
-        <svg viewBox="0 0 100 130" className="w-full h-full relative z-10" preserveAspectRatio="xMidYMid slice">
+        <svg viewBox="0 -20 100 150" className="w-full h-full relative z-10" preserveAspectRatio="xMidYMid meet">
           <defs>
             <linearGradient id="metalGrad" x1="0" y1="0" x2="1" y2="1">
               <stop offset="0%" stopColor="#b0b0b0" />
@@ -794,7 +794,7 @@ const SvgPortrait: React.FC<Props> = ({ archetype, emotion = 'neutral', classNam
       <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
       <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
 
-      <svg viewBox="0 0 100 130" className="w-full h-full relative z-10" preserveAspectRatio="xMidYMid slice">
+      <svg viewBox="0 -20 100 150" className="w-full h-full relative z-10" preserveAspectRatio="xMidYMid meet">
         <Defs />
         <Hair back={true} />
         <Clothing />
