@@ -16,7 +16,7 @@ type Clothes = 'suit' | 'dress' | 'uniform' | 'shirt' | 'trench' | 'vest' | 'vel
 type Hat = 'fedora' | 'cloche' | 'cop' | 'newsboy' | 'headband' | 'top_hat' | 'none';
 type Accessory = 'cigar' | 'glasses' | 'pince_nez' | 'wire_glasses' | 'pearls' | 'scarf' | 'earrings' | 'sunflower' | 'none';
 type HairStyle = 'short' | 'bob' | 'bald' | 'slick' | 'wavy' | 'finger_waves' | 'receding' | 'wilde_locks';
-type Beard = 'none' | 'goatee' | 'full' | 'distinguished' | 'stubble';
+type Beard = 'none' | 'goatee' | 'full' | 'distinguished' | 'stubble' | 'small_goatee';
 
 interface PortraitConfig {
   gender: Gender;
@@ -46,7 +46,7 @@ const CONFIGS: Record<PortraitArchetype, PortraitConfig> = {
     hat: 'none',
     accessory: 'wire_glasses',
     hairStyle: 'receding',
-    beard: 'none',
+    beard: 'small_goatee',
     facialFeatures: {
       noseShape: 'prominent',
       jawline: 'refined',
@@ -280,10 +280,10 @@ const SvgPortrait: React.FC<Props> = ({ archetype, emotion = 'neutral', classNam
         {config.hairStyle === 'short' && <path d="M25,45 C25,15 75,15 75,45 C75,25 60,10 40,10 C20,10 25,30 25,45 Z" fill={fill} />}
         {config.hairStyle === 'receding' && (
           <g>
-            <path d="M30,35 C30,20 35,12 40,10 C45,8 50,8 55,8 C60,8 65,10 70,15 C72,18 70,28 70,35" fill={fill} />
-            <path d="M32,32 C32,25 35,18 40,15" fill={fill} opacity="0.5" />
-            <path d="M68,32 C68,25 65,18 60,15" fill={fill} opacity="0.5" />
-            <ellipse cx="50" cy="18" rx="12" ry="6" fill={`url(#hairShine-${archetype})`} />
+            <path d="M32,28 C32,18 36,10 40,8 C45,6 50,6 55,6 C60,6 64,8 68,13 C70,16 68,24 68,28" fill={fill} />
+            <path d="M34,26 C34,20 36,14 40,12" fill={fill} opacity="0.4" />
+            <path d="M66,26 C66,20 64,14 60,12" fill={fill} opacity="0.4" />
+            <ellipse cx="50" cy="14" rx="10" ry="5" fill={`url(#hairShine-${archetype})`} />
           </g>
         )}
         {config.hairStyle === 'wilde_locks' && (
@@ -383,6 +383,18 @@ const SvgPortrait: React.FC<Props> = ({ archetype, emotion = 'neutral', classNam
         <g className="head-breathe">
           <path d="M38,76 Q50,70 62,76 Q60,80 50,78 Q40,80 38,76" fill={beardColor} />
           <path d="M46,82 C46,88 54,88 54,82 L54,78 L46,78 Z" fill={beardColor} />
+        </g>
+      );
+    }
+
+    if (config.beard === 'small_goatee') {
+      // Small, refined mustache and goatee for Henry James
+      return (
+        <g className="head-breathe">
+          {/* Small mustache */}
+          <path d="M42,76 Q46,74 50,74 Q54,74 58,76 Q56,78 50,77 Q44,78 42,76" fill={beardColor} opacity="0.8" />
+          {/* Small goatee */}
+          <path d="M48,82 C48,85 52,85 52,82 L52,80 L48,80 Z" fill={beardColor} opacity="0.8" />
         </g>
       );
     }

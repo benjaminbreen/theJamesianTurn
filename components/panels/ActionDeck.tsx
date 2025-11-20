@@ -29,32 +29,44 @@ export const ActionDeck = () => {
         
         {/* Status Indicators */}
         <div className="flex gap-4 text-xs font-bold uppercase tracking-wider">
-            <div className="flex items-center gap-2 bg-white/50 px-3 py-1.5 rounded border border-victorian-gold/30">
+            <div className={`flex items-center gap-2 px-3 py-1.5 rounded border-2 ${
+                isChronoscope
+                    ? 'bg-slate-800 border-cyan-500/50'
+                    : 'bg-[#e8d7b5] border-[#8b6914] shadow-sm'
+            }`}>
                 <span className="text-base">📚</span>
                 <div className="flex flex-col items-start">
                     <span className="text-[9px] opacity-60 leading-none">Erudition</span>
-                    <span className={`text-sm ${isChronoscope ? 'text-cyan-400' : 'text-victorian-gold'}`}>{playerStats.erudition}</span>
+                    <span className={`text-sm font-bold ${isChronoscope ? 'text-cyan-400' : 'text-[#8b6914]'}`}>{playerStats.erudition}</span>
                 </div>
             </div>
-            <div className="flex items-center gap-2 bg-white/50 px-3 py-1.5 rounded border border-victorian-red/30">
+            <div className={`flex items-center gap-2 px-3 py-1.5 rounded border-2 ${
+                isChronoscope
+                    ? 'bg-slate-800 border-amber-500/50'
+                    : 'bg-[#f5deb3] border-[#8b0000] shadow-sm'
+            }`}>
                 <span className="text-base">⭐</span>
                 <div className="flex flex-col items-start">
                     <span className="text-[9px] opacity-60 leading-none">Reputation</span>
-                    <span className={`text-sm ${isChronoscope ? 'text-amber-400' : 'text-victorian-red'}`}>{playerStats.reputation}</span>
+                    <span className={`text-sm font-bold ${isChronoscope ? 'text-amber-400' : 'text-[#8b0000]'}`}>{playerStats.reputation}</span>
                 </div>
             </div>
-            <div className="flex items-center gap-2 bg-white/50 px-3 py-1.5 rounded border border-green-700/30">
+            <div className={`flex items-center gap-2 px-3 py-1.5 rounded border-2 ${
+                isChronoscope
+                    ? 'bg-slate-800 border-green-500/50'
+                    : 'bg-[#e8f5e8] border-[#2f4f2f] shadow-sm'
+            }`}>
                 <span className="text-base">💚</span>
                 <div className="flex flex-col items-start">
                     <span className="text-[9px] opacity-60 leading-none">Health</span>
-                    <span className={`text-sm ${
+                    <span className={`text-sm font-bold ${
                         playerStats.composure > playerStats.maxComposure * 0.75
-                            ? (isChronoscope ? 'text-green-400' : 'text-green-700')
+                            ? (isChronoscope ? 'text-green-400' : 'text-[#2f4f2f]')
                             : playerStats.composure > playerStats.maxComposure * 0.5
-                            ? (isChronoscope ? 'text-yellow-400' : 'text-yellow-700')
+                            ? (isChronoscope ? 'text-yellow-400' : 'text-[#8b6914]')
                             : playerStats.composure > playerStats.maxComposure * 0.25
-                            ? (isChronoscope ? 'text-orange-400' : 'text-orange-700')
-                            : (isChronoscope ? 'text-red-400' : 'text-red-700')
+                            ? (isChronoscope ? 'text-orange-400' : 'text-[#b8860b]')
+                            : (isChronoscope ? 'text-red-400' : 'text-[#8b0000]')
                     }`}>
                         {playerStats.composure > playerStats.maxComposure * 0.75
                             ? 'Fine'

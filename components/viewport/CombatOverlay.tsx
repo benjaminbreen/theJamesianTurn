@@ -43,7 +43,7 @@ export const CombatOverlay = () => {
                 <div className="flex justify-between items-center w-full">
                     {/* Player Stats */}
                     <div className="text-center flex flex-col items-center w-1/3">
-                        <div className="w-24 h-24 mb-3">
+                        <div className="w-28 h-28 mb-3 rounded-lg overflow-hidden border-2 border-gold-600">
                             <SvgPortrait
                                 archetype="henry_james"
                                 emotion={
@@ -52,7 +52,7 @@ export const CombatOverlay = () => {
                                     playerStats.composure < 30 ? 'afraid' as PortraitEmotion :
                                     'neutral' as PortraitEmotion
                                 }
-                                size="lg"
+                                size="md"
                             />
                         </div>
                         <h2 className="font-bold text-lg mb-2">Henry James</h2>
@@ -69,7 +69,7 @@ export const CombatOverlay = () => {
 
                     {/* Opponent Stats */}
                     <div className="text-center flex flex-col items-center w-1/3">
-                        <div className="w-24 h-24 mb-3">
+                        <div className="w-28 h-28 mb-3 rounded-lg overflow-hidden border-2 border-gold-600">
                             {combatOpponent.portraitArchetype && (
                                 <SvgPortrait
                                     archetype={combatOpponent.portraitArchetype}
@@ -80,7 +80,7 @@ export const CombatOverlay = () => {
                                         combatPhase === 'PLAYER_CHOICE' ? 'suspicious' as PortraitEmotion :
                                         'angry' as PortraitEmotion
                                     }
-                                    size="lg"
+                                    size="md"
                                 />
                             )}
                         </div>
@@ -103,13 +103,13 @@ export const CombatOverlay = () => {
                             disabled={!isTurn}
                             onClick={() => executeCombatMove(move.id)}
                             className={`p-4 border text-left transition-all relative overflow-hidden group ${
-                                isChronoscope 
-                                    ? 'border-amber-500/30 hover:bg-amber-500/10 disabled:opacity-30 disabled:hover:bg-transparent' 
+                                isChronoscope
+                                    ? 'border-amber-500/30 hover:bg-amber-500/10 disabled:opacity-30 disabled:hover:bg-transparent'
                                     : 'border-[#5c4033] hover:bg-[#5c4033] hover:text-[#fffdf5] disabled:opacity-50'
                             }`}
                         >
-                            <div className="font-bold text-sm mb-1">{move.name}</div>
-                            <div className="text-[10px] opacity-70">{move.description}</div>
+                            <div className="font-bold text-lg mb-2">{move.name}</div>
+                            <div className="text-sm opacity-70">{move.description}</div>
                             {isTurn && isChronoscope && (
                                 <div className="absolute inset-0 bg-amber-500/5 translate-x-[-100%] group-hover:translate-x-0 transition-transform" />
                             )}

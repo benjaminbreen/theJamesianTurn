@@ -21,11 +21,11 @@ export const StreamPanel = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
             className={`p-4 shadow-sm border-l-4 ${
-            entry.source === 'SYSTEM' 
-                ? 'border-gray-300 text-gray-500 italic text-xs bg-white'
+            entry.source === 'SYSTEM'
+                ? 'border-gray-300 text-gray-500 italic text-sm bg-white'
                 : entry.source === 'COMBAT'
-                ? 'border-victorian-red bg-red-50/30 text-[#2b2520] text-sm'
-                : 'border-[#d4af37] bg-[#fffdf5] text-[#1a1614] text-base leading-relaxed'
+                ? 'border-victorian-red bg-red-50/30 text-[#2b2520] text-base'
+                : 'border-[#d4af37] bg-[#fffdf5] text-[#1a1614] text-lg leading-relaxed'
           }`}>
             {entry.source !== 'SYSTEM' && (
                 <span className="opacity-40 text-[10px] block mb-2 uppercase tracking-widest font-sans font-bold flex justify-between">
