@@ -25,11 +25,21 @@ export const DialogueOverlay = () => {
 
   const npc = PERSONAS.find(p => p.id === dialogueState.npcId);
 
+  console.log('DialogueOverlay - NPC:', npc);
+  console.log('DialogueOverlay - NPC Portrait Archetype:', npc?.portraitArchetype);
+
   const handleSend = () => {
       if (!input.trim()) return;
       const toneStr = tone < 30 ? 'Snide' : tone > 70 ? 'Polite' : 'Neutral';
       sendDialogue(input, toneStr);
       setInput('');
+  };
+
+  const handleChallenge = () => {
+      console.log('Challenge button clicked, NPC:', npc);
+      if (npc) {
+          startCombat(npc.id);
+      }
   };
 
   return (
@@ -49,9 +59,13 @@ export const DialogueOverlay = () => {
                 isChronoscope ? 'border-amber-500/30' : 'border-[#5c4033]/20'
             }`}>
                 <div className="flex items-center gap-4">
-                    {npc?.portraitArchetype && (
-                        <div className="w-16 h-16 shrink-0">
+                    {npc?.portraitArchetype ? (
+                        <div className="w-20 h-20 shrink-0 rounded-lg overflow-hidden border-2 border-gold-600">
                             <SvgPortrait archetype={npc.portraitArchetype} size="md" />
+                        </div>
+                    ) : (
+                        <div className="w-20 h-20 shrink-0 rounded-lg bg-gray-300 flex items-center justify-center text-xs">
+                            No Portrait
                         </div>
                     )}
                     <div>
@@ -60,11 +74,12 @@ export const DialogueOverlay = () => {
                     </div>
                 </div>
                 <div className="flex gap-2">
-                    <button 
-                        onClick={() => startCombat(npc!.id)}
-                        className={`px-3 py-1 text-xs font-bold uppercase border transition-colors ${
-                            isChronoscope 
-                            ? 'border-red-500 text-red-500 hover:bg-red-500/20' 
+                    <button
+                        onClick={handleChallenge}
+                        disabled={!npc}
+                        className={`px-3 py-1 text-xs font-bold uppercase border transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                            isChronoscope
+                            ? 'border-red-500 text-red-500 hover:bg-red-500/20'
                             : 'border-[#8b0000] text-[#8b0000] hover:bg-[#8b0000] hover:text-white'
                         }`}
                     >
