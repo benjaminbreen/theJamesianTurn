@@ -13,7 +13,7 @@ interface Props {
 type Gender = 'm' | 'f' | 'n';
 type SkinTone = 'pale' | 'tan' | 'dark' | 'olive' | 'metal';
 type Clothes = 'suit' | 'dress' | 'uniform' | 'shirt' | 'trench' | 'vest' | 'velvet_coat';
-type Hat = 'fedora' | 'cloche' | 'cop' | 'newsboy' | 'headband' | 'top_hat' | 'none';
+type Hat = 'fedora' | 'cloche' | 'cop' | 'newsboy' | 'headband' | 'top_hat' | 'bowler' | 'none';
 type Accessory = 'cigar' | 'glasses' | 'pince_nez' | 'wire_glasses' | 'pearls' | 'scarf' | 'earrings' | 'sunflower' | 'none';
 type HairStyle = 'short' | 'bob' | 'bald' | 'slick' | 'wavy' | 'finger_waves' | 'receding' | 'wilde_locks';
 type Beard = 'none' | 'goatee' | 'full' | 'distinguished' | 'stubble' | 'small_goatee';
@@ -43,7 +43,7 @@ const CONFIGS: Record<PortraitArchetype, PortraitConfig> = {
     hairColor: '#1a1a1a',
     eyeColor: '#4a5f7a',
     clothes: 'suit',
-    hat: 'none',
+    hat: 'bowler',
     accessory: 'wire_glasses',
     hairStyle: 'receding',
     beard: 'small_goatee',
@@ -538,7 +538,9 @@ const SvgPortrait: React.FC<Props> = ({ archetype, emotion = 'neutral', classNam
         d={
           config.gender === 'm'
             ? config.facialFeatures?.jawline === 'refined'
-              ? "M28,35 C28,12 72,12 72,35 L72,55 C72,76 62,90 50,90 C38,90 28,76 28,55 Z"
+              ? archetype === 'henry_james'
+                ? "M25,35 C25,12 75,12 75,35 L75,55 C75,76 63,90 50,90 C37,90 25,76 25,55 Z"
+                : "M28,35 C28,12 72,12 72,35 L72,55 C72,76 62,90 50,90 C38,90 28,76 28,55 Z"
               : config.facialFeatures?.jawline === 'strong'
               ? "M26,35 C26,10 74,10 74,35 L74,55 C74,78 62,92 50,92 C38,92 26,78 26,55 Z"
               : "M28,35 C28,10 72,10 72,35 L72,55 C72,78 60,92 50,92 C40,92 28,78 28,55 Z"
@@ -591,34 +593,36 @@ const SvgPortrait: React.FC<Props> = ({ archetype, emotion = 'neutral', classNam
         )}
       </g>
 
-      {/* Mouth */}
-      <g transform="translate(0, 2)">
-        <path
-          d={getMouthPath()}
-          fill="none"
-          stroke="#8a5a44"
-          strokeWidth={config.gender === 'f' ? 4 : 2}
-          strokeLinecap="round"
-        />
-        {config.facialFeatures?.lipFullness === 'full' && (
+      {/* Mouth - hidden for Henry James */}
+      {archetype !== 'henry_james' && (
+        <g transform="translate(0, 2)">
           <path
             d={getMouthPath()}
             fill="none"
-            stroke={config.gender === 'f' ? '#b71c1c' : '#d7a099'}
-            strokeWidth={config.gender === 'f' ? 2 : 1.5}
+            stroke="#8a5a44"
+            strokeWidth={config.gender === 'f' ? 4 : 2}
             strokeLinecap="round"
           />
-        )}
-        {config.gender === 'f' && (
-          <path
-            d={getMouthPath()}
-            fill="none"
-            stroke="#b71c1c"
-            strokeWidth="2"
-            strokeLinecap="round"
-          />
-        )}
-      </g>
+          {config.facialFeatures?.lipFullness === 'full' && (
+            <path
+              d={getMouthPath()}
+              fill="none"
+              stroke={config.gender === 'f' ? '#b71c1c' : '#d7a099'}
+              strokeWidth={config.gender === 'f' ? 2 : 1.5}
+              strokeLinecap="round"
+            />
+          )}
+          {config.gender === 'f' && (
+            <path
+              d={getMouthPath()}
+              fill="none"
+              stroke="#b71c1c"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
+          )}
+        </g>
+      )}
 
       <Beard />
 
@@ -759,6 +763,18 @@ const SvgPortrait: React.FC<Props> = ({ archetype, emotion = 'neutral', classNam
         <g transform="translate(0, -5)">
           <path d="M15,25 C15,5 85,5 85,25 L90,32 L10,32 Z" fill="#3e2723" />
           <path d="M10,32 Q50,38 90,32" fill="none" stroke="#2d1e1a" strokeWidth="2" />
+        </g>
+      )}
+      {config.hat === 'bowler' && (
+        <g transform="translate(0, -8)">
+          {/* Brim */}
+          <ellipse cx="50" cy="28" rx="28" ry="4" fill="#1a1a1a" />
+          <ellipse cx="50" cy="27" rx="26" ry="3" fill="#2a2a2a" />
+          {/* Rounded crown */}
+          <ellipse cx="50" cy="14" rx="20" ry="14" fill="#1a1a1a" />
+          <ellipse cx="50" cy="12" rx="18" ry="12" fill="#2a2a2a" />
+          {/* Highlight */}
+          <ellipse cx="45" cy="10" rx="8" ry="5" fill="#3a3a3a" opacity="0.6" />
         </g>
       )}
     </g>
