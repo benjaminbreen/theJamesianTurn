@@ -40,13 +40,13 @@ const CONFIGS: Record<PortraitArchetype, PortraitConfig> = {
   henry_james: {
     gender: 'm',
     skin: 'pale',
-    hairColor: '#6b6b6b',
+    hairColor: '#1a1a1a',
     eyeColor: '#4a5f7a',
     clothes: 'suit',
     hat: 'none',
     accessory: 'wire_glasses',
     hairStyle: 'receding',
-    beard: 'distinguished',
+    beard: 'none',
     facialFeatures: {
       noseShape: 'prominent',
       jawline: 'refined',
@@ -280,10 +280,10 @@ const SvgPortrait: React.FC<Props> = ({ archetype, emotion = 'neutral', classNam
         {config.hairStyle === 'short' && <path d="M25,45 C25,15 75,15 75,45 C75,25 60,10 40,10 C20,10 25,30 25,45 Z" fill={fill} />}
         {config.hairStyle === 'receding' && (
           <g>
-            <path d="M28,50 C28,30 35,22 40,20 C45,18 50,18 55,18 C60,18 65,20 70,25 C73,28 72,40 72,50" fill={fill} />
-            <path d="M30,45 C30,35 35,28 40,25" fill={fill} opacity="0.6" />
-            <path d="M70,45 C70,35 65,28 60,25" fill={fill} opacity="0.6" />
-            <ellipse cx="50" cy="25" rx="15" ry="8" fill={`url(#hairShine-${archetype})`} />
+            <path d="M30,35 C30,20 35,12 40,10 C45,8 50,8 55,8 C60,8 65,10 70,15 C72,18 70,28 70,35" fill={fill} />
+            <path d="M32,32 C32,25 35,18 40,15" fill={fill} opacity="0.5" />
+            <path d="M68,32 C68,25 65,18 60,15" fill={fill} opacity="0.5" />
+            <ellipse cx="50" cy="18" rx="12" ry="6" fill={`url(#hairShine-${archetype})`} />
           </g>
         )}
         {config.hairStyle === 'wilde_locks' && (
