@@ -8,7 +8,7 @@ import { NarratorChat } from './panels/InspectorPanel';
 import { EducationPanel } from './panels/EducationPanel';
 import { InventoryPanel } from './panels/InventoryPanel';
 import { useGame } from '../contexts/GameContext';
-import { AsciiPortrait } from './visuals/AsciiPortrait';
+import SvgPortrait from './visuals/SvgPortrait';
 import { SplashPage } from './visuals/SplashPage';
 import { ZONES } from '../lib/zones';
 import { MobileSidebar } from './mobile/MobileSidebar';
@@ -147,7 +147,7 @@ export const Layout = () => {
             >
                 <div className="absolute inset-0 bg-[radial-gradient(#cfb53b_1px,transparent_1px)] [background-size:10px_10px] opacity-10"></div>
                 <div className="relative w-32 h-32 mb-3 rounded-full bg-white border-4 border-[#d4af37] shadow-md flex items-center justify-center overflow-hidden transition-transform group-hover:scale-105 duration-500">
-                    <AsciiPortrait id="HENRY_JAMES" className="scale-150 text-[#1a1614]" />
+                    <SvgPortrait archetype="henry_james" size="lg" className="scale-105" />
                 </div>
                 <h2 className="text-2xl font-bold text-[#8b0000] font-heading">Henry James</h2>
                 <p className="text-xs font-sans uppercase tracking-widest opacity-60 mb-2">Man of Letters</p>

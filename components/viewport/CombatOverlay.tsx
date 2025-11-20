@@ -4,6 +4,8 @@ import { useGame } from '../../contexts/GameContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { COMBAT_MOVES } from '../../lib/combat';
+import SvgPortrait from '../visuals/SvgPortrait';
+import { PortraitEmotion } from '../../types';
 
 export const CombatOverlay = () => {
   const { combatPhase, playerStats, combatOpponent, executeCombatMove, endCombat } = useGame();
@@ -40,10 +42,22 @@ export const CombatOverlay = () => {
                 {/* Battle Stage */}
                 <div className="flex justify-between items-center w-full">
                     {/* Player Stats */}
-                    <div className="text-center w-1/3">
+                    <div className="text-center flex flex-col items-center w-1/3">
+                        <div className="w-24 h-24 mb-3">
+                            <SvgPortrait
+                                archetype="henry_james"
+                                emotion={
+                                    combatPhase === 'VICTORY' ? 'happy' as PortraitEmotion :
+                                    combatPhase === 'DEFEAT' ? 'injured' as PortraitEmotion :
+                                    playerStats.composure < 30 ? 'afraid' as PortraitEmotion :
+                                    'neutral' as PortraitEmotion
+                                }
+                                size="lg"
+                            />
+                        </div>
                         <h2 className="font-bold text-lg mb-2">Henry James</h2>
                         <div className={`h-4 w-full ${isChronoscope ? 'bg-slate-800' : 'bg-gray-300'} relative`}>
-                             <div 
+                             <div
                                 className={`h-full transition-all duration-500 ${isChronoscope ? 'bg-amber-500' : 'bg-blue-800'}`}
                                 style={{ width: `${(playerStats.composure / playerStats.maxComposure) * 100}%` }}
                              />
@@ -54,10 +68,25 @@ export const CombatOverlay = () => {
                     <div className="text-2xl font-bold opacity-50">VS</div>
 
                     {/* Opponent Stats */}
-                    <div className="text-center w-1/3">
+                    <div className="text-center flex flex-col items-center w-1/3">
+                        <div className="w-24 h-24 mb-3">
+                            {combatOpponent.portraitArchetype && (
+                                <SvgPortrait
+                                    archetype={combatOpponent.portraitArchetype}
+                                    emotion={
+                                        combatPhase === 'DEFEAT' ? 'happy' as PortraitEmotion :
+                                        combatPhase === 'VICTORY' ? 'injured' as PortraitEmotion :
+                                        combatOpponent.stats.composure < 30 ? 'afraid' as PortraitEmotion :
+                                        combatPhase === 'PLAYER_CHOICE' ? 'suspicious' as PortraitEmotion :
+                                        'angry' as PortraitEmotion
+                                    }
+                                    size="lg"
+                                />
+                            )}
+                        </div>
                         <h2 className="font-bold text-lg mb-2">{combatOpponent.name}</h2>
                         <div className={`h-4 w-full ${isChronoscope ? 'bg-slate-800' : 'bg-gray-300'} relative`}>
-                             <div 
+                             <div
                                 className={`h-full transition-all duration-500 ${isChronoscope ? 'bg-red-500' : 'bg-[#8b0000]'}`}
                                 style={{ width: `${(combatOpponent.stats.composure / 100) * 100}%` }} // Assuming 100 max for NPC
                              />

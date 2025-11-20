@@ -1,7 +1,7 @@
 
 import React, { useRef, useEffect, useState } from 'react';
 import { useGame } from '../../contexts/GameContext';
-import { AsciiPortrait } from '../visuals/AsciiPortrait';
+import SvgPortrait from '../visuals/SvgPortrait';
 
 // --- Sub-Component: The Inspector (Entity View) ---
 export const EntityInspector = () => {
@@ -10,7 +10,7 @@ export const EntityInspector = () => {
       <div className="p-6 space-y-6">
          <div className="flex flex-col items-center p-6 bg-paper-100 border border-paper-200 shadow-inner">
             <div className="w-32 h-32 mb-4 flex items-center justify-center bg-paper-200 rounded-full overflow-hidden border-4 border-white shadow-md">
-               <AsciiPortrait id="HENRY_JAMES" className="scale-125 text-paper-900" />
+               <SvgPortrait archetype="henry_james" size="lg" className="scale-110" />
             </div>
             <h3 className="text-xl font-serif font-bold text-victorian-red">Henry James</h3>
             <p className="text-xs font-sans uppercase tracking-widest opacity-60 mt-1">Man of Letters</p>

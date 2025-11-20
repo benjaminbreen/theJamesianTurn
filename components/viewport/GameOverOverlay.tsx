@@ -3,7 +3,7 @@ import React from 'react';
 import { useGame } from '../../contexts/GameContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { AsciiPortrait } from '../visuals/AsciiPortrait';
+import SvgPortrait from '../visuals/SvgPortrait';
 
 export const GameOverOverlay = () => {
     const { lifecycle, gameSummary, endGame } = useGame();
@@ -29,7 +29,7 @@ export const GameOverOverlay = () => {
                     {/* Score Card */}
                     <div className="w-1/3 bg-[#1a1614] p-6 border border-[#5c4033] flex flex-col items-center">
                         <div className="w-32 h-32 mb-6 rounded-full overflow-hidden border-4 border-[#d4af37] bg-white flex items-center justify-center">
-                             <AsciiPortrait id="HENRY_JAMES" className="scale-150 text-black" />
+                             <SvgPortrait archetype="henry_james" size="lg" />
                         </div>
                         <h2 className="text-2xl font-bold text-[#d4af37] mb-1 text-center">{gameSummary.titleAwarded}</h2>
                         <div className="w-full h-px bg-[#5c4033] my-4"></div>

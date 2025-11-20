@@ -1,5 +1,5 @@
 
-import { Persona } from '../types';
+import { Persona, PortraitArchetype } from '../types';
 
 export const PERSONAS: Persona[] = [
   {
@@ -16,7 +16,8 @@ export const PERSONAS: Persona[] = [
         reputation: 90,
         erudition: 95
     },
-    asciiId: 'WILDE'
+    asciiId: 'WILDE',
+    portraitArchetype: 'oscar_wilde' as PortraitArchetype
   },
   {
     id: 'npc-edison',
@@ -32,7 +33,8 @@ export const PERSONAS: Persona[] = [
         reputation: 95,
         erudition: 85
     },
-    asciiId: 'EDISON'
+    asciiId: 'EDISON',
+    portraitArchetype: 'thomas_edison' as PortraitArchetype
   }
 ];
 

@@ -2,7 +2,7 @@
 import React from 'react';
 import { useGame } from '../../contexts/GameContext';
 import { useTheme } from '../../contexts/ThemeContext';
-import { AsciiPortrait } from '../visuals/AsciiPortrait';
+import SvgPortrait from '../visuals/SvgPortrait';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export const PlayerModal = () => {
@@ -38,7 +38,7 @@ export const PlayerModal = () => {
                         <div className={`w-40 h-40 rounded-full flex items-center justify-center mb-6 overflow-hidden border-4 shadow-lg ${
                             isChronoscope ? 'border-amber-500 bg-black' : 'border-[#d4af37] bg-white'
                         }`}>
-                            <AsciiPortrait id="HENRY_JAMES" className="scale-150" />
+                            <SvgPortrait archetype="henry_james" size="lg" />
                         </div>
                         
                         <h2 className="text-3xl font-bold font-serif mb-1">Henry James</h2>

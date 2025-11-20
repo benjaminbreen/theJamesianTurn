@@ -76,10 +76,11 @@ export type Persona = Entity & {
   disposition: 'FRIENDLY' | 'NEUTRAL' | 'HOSTILE';
   rumorsKnown: string[];
   stats: {
-      composure: number; 
-      reputation: number; 
-      erudition: number; 
+      composure: number;
+      reputation: number;
+      erudition: number;
   };
+  portraitArchetype?: PortraitArchetype;
 };
 
 export type DialogueState = {
@@ -223,3 +224,20 @@ export type GameSummary = {
     };
     titleAwarded: string; // e.g. "The Master" or "The Bore"
 };
+
+// --- Portrait System ---
+export type PortraitEmotion = 'neutral' | 'happy' | 'angry' | 'afraid' | 'suspicious' | 'dead' | 'injured';
+export type PortraitArchetype =
+  | 'henry_james'
+  | 'oscar_wilde'
+  | 'thomas_edison'
+  | 'gentleman'
+  | 'lady'
+  | 'flapper'
+  | 'mobster_m'
+  | 'mobster_f'
+  | 'cop'
+  | 'worker'
+  | 'sailor'
+  | 'pharmacist'
+  | 'machine';

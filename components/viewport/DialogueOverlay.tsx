@@ -4,6 +4,7 @@ import { useGame } from '../../contexts/GameContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { PERSONAS } from '../../lib/personas';
 import { motion, AnimatePresence } from 'framer-motion';
+import SvgPortrait from '../visuals/SvgPortrait';
 
 export const DialogueOverlay = () => {
   const { dialogueState, sendDialogue, closeDialogue, rumors, startCombat } = useGame();
@@ -47,9 +48,16 @@ export const DialogueOverlay = () => {
             <div className={`p-4 flex justify-between items-center border-b ${
                 isChronoscope ? 'border-amber-500/30' : 'border-[#5c4033]/20'
             }`}>
-                <div>
-                    <h2 className="text-xl font-bold">{npc?.name}</h2>
-                    <p className="text-xs opacity-70">{npc?.description}</p>
+                <div className="flex items-center gap-4">
+                    {npc?.portraitArchetype && (
+                        <div className="w-16 h-16 shrink-0">
+                            <SvgPortrait archetype={npc.portraitArchetype} size="md" />
+                        </div>
+                    )}
+                    <div>
+                        <h2 className="text-xl font-bold">{npc?.name}</h2>
+                        <p className="text-xs opacity-70">{npc?.description}</p>
+                    </div>
                 </div>
                 <div className="flex gap-2">
                     <button 
